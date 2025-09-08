@@ -2,7 +2,7 @@ import itertools
 import random
 from collections import Counter
 
-colors = ["♦️", "♥️", "♠️", "♣️"] # j'ai changer avec les émojis plus simple ( pas comptable avec hand rank)
+colors = ['D', 'H', 'S', 'C'] # les émojis peuvent avoir des pb ducoup faudra juste jeter un oeil pour mettre les emojis à l'affichage en fonction de la lettre qui sort
 values = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 
 # Constantes de classe pour éviter la redondance
@@ -244,3 +244,4 @@ if __name__ == "__main__":
     print("Main du joueur :", player_hand)
     print("Board :", board)
     print("Résultat :", rank)
+

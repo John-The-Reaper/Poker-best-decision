@@ -102,20 +102,20 @@ class Poker:
     def winner(self,board): # marche dans l'idée je pense mais pas fais de test le pb vient de fhand rank qui est inconpatible avec elle pour l'instant du au tuple
         """Détermine le gagnant du pot (à implémenter)"""
         
-        best_rank = None
+        best_rank = 0
         winners = []
 
         for player in self.players:
-            rank = self.hand_rank(player.hands,board) # détermine un rank en fonction des cartes de la main du joueur et le board pour carrect dons l'état à cause du tuple
+            rank = self.hand_rank(player.hands,board)[0] # détermine un rank en fonction des cartes de la main du joueur et le board pour carrect dons l'état à cause du tuple
 
-            if best_rank != None and rank> best_rank:
+            if rank > best_rank:
                 best_rank = rank
                 winners = [player]
 
             elif rank == best_rank:
                 winners.append(player)
 
-        if winners:
+        if len(winners) > 1:
             split = self.pot // len(winners) # split le pot en fonction du nombre de joueur mais manque de détail (ex: si on mise plus que l'adversaire on  doit recevoir autant de jeton miser facile à faire mais juste flemme il est tard ect) ( à revoir)
             for winner in winners:
                 winner.win(split) 
@@ -131,7 +131,7 @@ class Poker:
         """
         cards = hand + board
         if len(cards) < 5:
-            return (1, "High Card", cards)
+            return (1, cards)
 
         # Extraire valeurs et couleurs
         values = [card[1] for card in cards]  # card[1] = valeur
@@ -156,24 +156,21 @@ class Poker:
                                                         for val in suit_values[i:i+5]]])
                         # Cas spécial : quinte flush à l'As (As bas)
                         if suit_values[:5] == [14, 5, 4, 3, 2]:
-                            return (9, "Straight Flush, Five high", 
-                                    [(suit, v) for v in ['A', '5', '4', '3', '2']])
+                            return (9, [(suit, v) for v in ['A', '5', '4', '3', '2']])
 
         # Carré (8)
         for value, count in value_counts.items():
             if count == 4:
                 kicker = max([v for v in num_values if v != VALUE_MAP[value]])
                 kicker_card = list(VALUE_MAP.keys())[list(VALUE_MAP.values()).index(kicker)]
-                return (8, f"Four of a Kind, {VALUE_NAMES[value]}", 
-                        [(s, value) for s in colors if (s, value) in cards] + 
+                return (8, [(s, value) for s in colors if (s, value) in cards] + 
                         [(s, kicker_card) for s in colors if (s, kicker_card) in cards])
 
         # Full House (7)
         if 3 in value_counts.values() and 2 in value_counts.values():
             three = max([k for k, v in value_counts.items() if v == 3], key=lambda x: VALUE_MAP[x])
             pair = max([k for k, v in value_counts.items() if v == 2], key=lambda x: VALUE_MAP[x])
-            return (7, f"Full House, {VALUE_NAMES[three]} over {VALUE_NAMES[pair]}", 
-                    [(s, three) for s in colors if (s, three) in cards] +
+            return (7, [(s, three) for s in colors if (s, three) in cards] +
                     [(s, pair) for s in colors if (s, pair) in cards])
 
         # Couleur (6)
@@ -182,20 +179,18 @@ class Poker:
             flush_cards = sorted([card for card in cards if card[0] == suit], 
                                key=lambda x: VALUE_MAP[x[1]], reverse=True)[:5]
             high_card = flush_cards[0][1]
-            return (6, f"Flush, {VALUE_NAMES[high_card]} high", flush_cards)
+            return (6, flush_cards)
 
         # Quinte (5)
         unique_values = sorted(set(num_values), reverse=True)
         for i in range(len(unique_values) - 4):
             if unique_values[i] - unique_values[i + 4] == 4 and len(set(unique_values[i:i+5])) == 5:
                 high_card = list(VALUE_MAP.keys())[list(VALUE_MAP.values()).index(unique_values[i])]
-                return (5, f"Straight, {VALUE_NAMES[high_card]} high", 
-                        [(s, k) for k, v in VALUE_MAP.items() for s in colors 
+                return (5, [(s, k) for k, v in VALUE_MAP.items() for s in colors 
                          if v in unique_values[i:i+5] and (s, k) in cards])
         # Cas spécial : quinte à l'As (As bas)
         if set([14, 5, 4, 3, 2]).issubset(set(num_values)):
-            return (5, "Straight, Five high", 
-                    [(s, k) for k, v in VALUE_MAP.items() for s in colors 
+            return (5, [(s, k) for k, v in VALUE_MAP.items() for s in colors 
                      if v in [14, 5, 4, 3, 2] and (s, k) in cards])
 
         # Brelan (4)
@@ -203,8 +198,7 @@ class Poker:
             three = max([k for k, v in value_counts.items() if v == 3], key=lambda x: VALUE_MAP[x])
             kickers = sorted([v for v in num_values if v != VALUE_MAP[three]], reverse=True)[:2]
             kicker_cards = [k for k, v in VALUE_MAP.items() if v in kickers]
-            return (4, f"Three of a Kind, {VALUE_NAMES[three]}", 
-                    [(s, three) for s in colors if (s, three) in cards] +
+            return (4, [(s, three) for s in colors if (s, three) in cards] +
                     [(s, k) for k in kicker_cards for s in colors if (s, k) in cards])
 
         # Double Paire (3)
@@ -213,8 +207,7 @@ class Poker:
             pairs = sorted(pairs, key=lambda x: VALUE_MAP[x], reverse=True)[:2]
             kicker = max([v for v in num_values if v not in [VALUE_MAP[p] for p in pairs]])
             kicker_card = list(VALUE_MAP.keys())[list(VALUE_MAP.values()).index(kicker)]
-            return (3, f"Two Pair, {VALUE_NAMES[pairs[0]]} and {VALUE_NAMES[pairs[1]]}", 
-                    [(s, p) for p in pairs for s in colors if (s, p) in cards] +
+            return (3, [(s, p) for p in pairs for s in colors if (s, p) in cards] +
                     [(s, kicker_card) for s in colors if (s, kicker_card) in cards])
 
         # Paire (2)
@@ -222,14 +215,13 @@ class Poker:
             pair = max([k for k, v in value_counts.items() if v == 2], key=lambda x: VALUE_MAP[x])
             kickers = sorted([v for v in num_values if v != VALUE_MAP[pair]], reverse=True)[:3]
             kicker_cards = [k for k, v in VALUE_MAP.items() if v in kickers]
-            return (2, f"Pair of {VALUE_NAMES[pair]}", 
-                    [(s, pair) for s in colors if (s, pair) in cards] +
+            return (2, [(s, pair) for s in colors if (s, pair) in cards] +
                     [(s, k) for k in kicker_cards for s in colors if (s, k) in cards])
 
         # Carte haute (1)
         high_cards = sorted(cards, key=lambda x: VALUE_MAP[x[1]], reverse=True)[:5]
         high_card = high_cards[0][1]
-        return (1, f"High Card, {VALUE_NAMES[high_card]}", high_cards)
+        return (1, high_cards)
     
 
 if __name__ == "__main__":
@@ -244,4 +236,5 @@ if __name__ == "__main__":
     print("Main du joueur :", player_hand)
     print("Board :", board)
     print("Résultat :", rank)
+
 

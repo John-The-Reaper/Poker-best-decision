@@ -14,8 +14,8 @@ VALUE_NAMES = {'2': 'Twos', '3': 'Threes', '4': 'Fours', '5': 'Fives', '6': 'Six
                'Q': 'Queens', 'K': 'Kings', 'A': 'Aces'}
 
 class Player:
-    def __init__(self, stack, position, hands=None):
-        self.hands = hands if hands is not None else []
+    def __init__(self, stack, position, hand):
+        self.hand = hand
         self.stack = stack
         self.position = position
 
@@ -27,7 +27,7 @@ class Player:
 
     def fold(self):
         """Le joueur se couche"""
-        pass
+        return 0
 
     def call(self, amount):
         """Le joueur suit une mise"""
@@ -42,8 +42,8 @@ class Player:
 class Dealer:
     def __init__(self, players_count=6):
         self.players_count = players_count
-        self.cards = []
-        self.board = []
+        self.cards = [] # ["D4", "DA"]
+        self.board = [] # 
 
     def cards_init(self):
         """Initialise le paquet de cartes"""
@@ -83,8 +83,8 @@ class Dealer:
         return self.board
 
 class Poker:
-    def __init__(self, players=None):
-        self.players = players if players is not None else []
+    def __init__(self, player):
+        self.player = player 
         self.pot = 0
 
     def add_to_pot(self, amount):
@@ -97,6 +97,25 @@ class Poker:
 
     def round(self):
         """Gère un tour de jeu complet (à implémenter)"""
+        if self.player.hand = []:
+          self.player.hand = input("Rentrez votre main :  ")
+        
+        
+        # Tous les commentaires suivants concernent le déroulement d'une partie et non d'un tour
+        # Penser à gérer le cas du all in général (si plus de jetons dans les stacks des joueurs ou que tous les joueurs ont 0 sauf un joueur)
+      
+        # Premier tour de mise
+        # Si raise : tour à nouveau
+        # Sinon flop
+        # Deuxième tour de mise
+        # Si raise : tour à nouveau
+        # Sinon turn
+        # Troisième tour de mise
+        # Si raise : tour à nouveau
+        # River
+        # Tour finale avec nouveau tour si raise
+      
+      
         pass
 
     def winner(self,board): # marche dans l'idée je pense mais pas fais de test le pb vient de fhand rank qui est inconpatible avec elle pour l'instant du au tuple
@@ -236,5 +255,6 @@ if __name__ == "__main__":
     print("Main du joueur :", player_hand)
     print("Board :", board)
     print("Résultat :", rank)
+
 
 

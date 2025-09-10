@@ -2,10 +2,9 @@ import itertools
 import random
 from collections import Counter
 
-colors = ['D', 'H', 'S', 'C'] # les émojis peuvent avoir des pb ducoup faudra juste jeter un oeil pour mettre les emojis à l'affichage en fonction de la lettre qui sort
+colors = ['D', 'H', 'S', 'C']  # Diamond, Heart, Spade, Club
 values = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 
-# Constantes de classe pour éviter la redondance
 VALUE_MAP = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
              'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
 
@@ -13,37 +12,45 @@ VALUE_NAMES = {'2': 'Twos', '3': 'Threes', '4': 'Fours', '5': 'Fives', '6': 'Six
                '7': 'Sevens', '8': 'Eights', '9': 'Nines', 'T': 'Tens', 'J': 'Jacks',
                'Q': 'Queens', 'K': 'Kings', 'A': 'Aces'}
 
+
 class Player:
     def __init__(self, stack, position, hand):
-        self.hand = hand
+        self.hand = hand              # [(suit, value), (suit, value)]
         self.stack = stack
         self.position = position
+        self.alive = True             # si le joueur s'est pas couché
+        self.in_current_round = 0     # montant mis dans le pot cette street (pour gérer calls)
+        self.total_contributed = 0    # montant total contribué sur la main
 
     def bet(self, amount):
-        """Le joueur mise une certaine somme"""
-        assert amount <= self.stack, "Le joueur ne peut pas miser plus que son stack"
+        """Le joueur mise une certaine somme (renvoie ce qui est effectivement mis)."""
+        amount = min(amount, self.stack)
+        assert amount >= 0
         self.stack -= amount
+        self.in_current_round += amount
+        self.total_contributed += amount
         return amount
 
     def fold(self):
         """Le joueur se couche"""
-        return 0
+        self.alive = False
 
-    def call(self, amount):
-        """Le joueur suit une mise"""
-        assert amount <= self.stack, "Le joueur ne peut pas suivre plus que son stack"
-        self.stack -= amount
-        return amount
+    def call(self, amount_to_call):
+        """Le joueur suit jusqu'à amount_to_call (en tenant compte de ce qu'il a déjà mis)."""
+        need = max(0, amount_to_call - self.in_current_round)
+        paid = self.bet(need)
+        return paid
 
     def win(self, pot):
         """Le joueur gagne une certaine somme"""
         self.stack += pot
 
+
 class Dealer:
     def __init__(self, players_count=6):
         self.players_count = players_count
-        self.cards = [] # ["D4", "DA"]
-        self.board = [] # 
+        self.cards = []
+        self.board = []
 
     def cards_init(self):
         """Initialise le paquet de cartes"""
@@ -52,117 +59,236 @@ class Dealer:
     def shuffle(self):
         random.shuffle(self.cards)
 
-    def hands(self):
-        """Distribue les mains aux joueurs"""
-        self.cards_init()
-        self.shuffle()
-        hands = []
-        for i in range(self.players_count):
-            hands.append(Player(1000, i, [self.cards.pop(), self.cards.pop()]))
-        return hands
-
     def deal_board(self, etape=0):
-        """Distribue le board, doit impérativement être appelé après hands()"""
-        if len(self.cards) < (4 if etape == 0 else 2 if etape == 1 else 1):
-            raise ValueError("Not enough cards in the deck to deal the board")
+        """Distribue le board; doit être appelé après avoir préparé le deck"""
+        # On simule le burn et le flop/turn/river
         if etape == 0:
-            # Flop
+            # Flop : burn 1 (pop silence) puis 3 cartes
+            if len(self.cards) < 4:
+                raise ValueError("Not enough cards to deal flop")
+            self.cards.pop()  # burn
             self.board = [self.cards.pop() for _ in range(3)]
-            if self.cards:  # Burn a card if deck is not empty
-                self.cards.pop()
         elif etape == 1:
-            # Turn
+            # Turn : burn 1, deal 1
+            if len(self.cards) < 2:
+                raise ValueError("Not enough cards to deal turn")
+            self.cards.pop()
             self.board.append(self.cards.pop())
-            if self.cards:  # Burn a card if deck is not empty
-                self.cards.pop()
         elif etape == 2:
-            # River
+            # River : burn 1, deal 1
+            if len(self.cards) < 2:
+                raise ValueError("Not enough cards to deal river")
+            self.cards.pop()
             self.board.append(self.cards.pop())
         else:
             raise ValueError("Invalid stage: etape must be 0 (flop), 1 (turn), or 2 (river)")
         return self.board
 
+
 class Poker:
-    def __init__(self, player):
-        self.player = player 
+    def __init__(self, player):  # 'player' = notre Player (main connue)
+        self.hero = player
         self.pot = 0
+        self.players = []  # liste des Player (hero + adversaires)
+        self.dealer = None
+        # small_blind, big_blind = 10, 20  # valeurs par défaut et à ajouter
+        """
+        Ligne 122 à 144 :
+        --> Retirer l'implémentation des joueurs et trouver un moyen de passer une liste de joueurs (ou on sera positionné comme dans la vraie partie)
+        --> Faire en sorte que big blind et small blind soient passés en paramètres 
+        """
+        
 
     def add_to_pot(self, amount):
-        """Ajoute une mise au pot"""
         self.pot += amount
 
-    def pot(self):
-        """Retourne la taille du pot (à implémenter pleinement)"""
+    def get_pot(self):
         return self.pot
 
-    def round(self):
-        """Gère un tour de jeu complet (à implémenter)"""
-        if self.player.hand = []:
-          self.player.hand = input("Rentrez votre main :  ")
-        
-        
-        # Tous les commentaires suivants concernent le déroulement d'une partie et non d'un tour
-        # Penser à gérer le cas du all in général (si plus de jetons dans les stacks des joueurs ou que tous les joueurs ont 0 sauf un joueur)
-      
-        # Premier tour de mise
-        # Si raise : tour à nouveau
-        # Sinon flop
-        # Deuxième tour de mise
-        # Si raise : tour à nouveau
-        # Sinon turn
-        # Troisième tour de mise
-        # Si raise : tour à nouveau
-        # River
-        # Tour finale avec nouveau tour si raise
-      
-      
-        pass
+    def round(self, dealer: Dealer):
+        """
+        Simule une main complète (simplifiée) :
+        - Initialise le deck (retire la main du hero pour éviter doublons)
+        - Distribue 2 cartes aux adversaires
+        - Simule blinds et une passe de mises par street (préflop/flop/turn/river)
+        - Showdown entre joueurs restants
+        """
+        self.dealer = dealer
+        # 1) Prépare le deck
+        dealer.cards_init()
+        # retire la main du hero du deck si fournie pour éviter doublons
+        if self.hero.hand:
+            for c in self.hero.hand:
+                if c in dealer.cards:
+                    dealer.cards.remove(c)
+                else:
+                    pass  # mismatch possible
+        dealer.shuffle()
 
-    def winner(self,board): # marche dans l'idée je pense mais pas fais de test le pb vient de fhand rank qui est inconpatible avec elle pour l'instant du au tuple
-        """Détermine le gagnant du pot (à implémenter)"""
-        
-        best_rank = 0
+        # 2) Crée les adversaires
+        opponents = []
+        opp_count = max(1, dealer.players_count - 1)
+        for i in range(opp_count):
+            card1 = dealer.cards.pop()
+            card2 = dealer.cards.pop()
+            opp = Player(stack=1000, position=i + 1, hand=[card1, card2])
+            opponents.append(opp)
+
+        # Compose la liste complète de joueurs ; hero en position 0
+        self.players = [self.hero] + opponents
+
+        # reset contributions
+        for p in self.players:
+            p.in_current_round = 0
+            p.total_contributed = 0
+            p.alive = True
+
+        # 3) Blinds (simplifié)
+        small_blind = 10
+        big_blind = 20
+        sb_player = self.players[1] if len(self.players) > 1 else self.players[0]
+        bb_player = self.players[2] if len(self.players) > 2 else (self.players[1] if len(self.players) > 1 else self.players[0])
+
+
+        self.add_to_pot(sb_player.bet(small_blind))
+        self.add_to_pot(bb_player.bet(big_blind))
+        current_bet = big_blind
+        print(f"Blinds: SB={small_blind} (P{sb_player.position}), BB={big_blind} (P{bb_player.position})")
+        print(f"Pot après blinds: {self.pot}")
+
+        # 4) Préflop
+        print("=== Préflop ===")
+        print(f"Hero: {self.hero.hand}")
+
+        def betting_round(current_bet):
+            """
+            Tour de mise interactif :
+            FO = Fold
+            CH = Check
+            CA = Call
+            RA <montant> = Raise
+            """
+            for p in self.players:
+                if not p.alive or p.stack <= 0:
+                    continue
+
+                print(f"\n--- Joueur {p.position} ---")
+                print(f"Main: {p.hand if p is self.hero else '??'}")
+                print(f"Board: {self.dealer.board}")
+                print(f"Pot: {self.pot}, Mise à suivre: {current_bet}, Stack: {p.stack}, Contrib: {p.in_current_round}")
+
+                action = input("Action (FO / CH / CA / RA <montant>): ").strip().upper()
+
+                if action == "FO":
+                    p.fold()
+                    print(f"Joueur {p.position} se couche.")
+
+                elif action == "CH":
+                    if current_bet == p.in_current_round:
+                        print(f"Joueur {p.position} check.")
+                    else:
+                        print("Check impossible, il y a une mise à suivre. -> Fold")
+                        p.fold()
+
+                elif action == "CA":
+                    to_pay = current_bet - p.in_current_round
+                    if to_pay > p.stack:
+                        to_pay = p.stack
+                    paid = p.call(to_pay)
+                    self.add_to_pot(paid)
+                    print(f"Joueur {p.position} call {paid}.")
+
+                elif action.startswith("RA"):
+                    try:
+                        _, amount_str = action.split()
+                        amount = int(amount_str)
+                        need = current_bet - p.in_current_round
+                        total = need + amount
+                        if total > p.stack:
+                            total = p.stack  # all-in si dépasse
+                        paid = p.bet(total)
+                        current_bet = p.in_current_round
+                        self.add_to_pot(paid)
+                        print(f"Joueur {p.position} raise à {p.in_current_round}.")
+                    except:
+                        print("Format raise invalide (ex: 'RA 50'). -> Fold")
+                        p.fold()
+                else:
+                    print("Action inconnue -> Fold.")
+                    p.fold()
+
+            return current_bet
+
+        # Préflop betting
+        current_bet = betting_round(current_bet)
+
+        # 5) Flop / Turn / River
+        for etape in range(3):  # 0=flop,1=turn,2=river
+            board = dealer.deal_board(etape)
+            print(f"--- {'Flop' if etape==0 else 'Turn' if etape==1 else 'River'} ---")
+            print("Board:", dealer.board)
+
+            for p in self.players:
+                p.in_current_round = 0
+            current_bet = 0
+            current_bet = betting_round(current_bet)
+
+            alive_players = [p for p in self.players if p.alive]
+            if len(alive_players) == 1:
+                winner = alive_players[0]
+                print(f"Tous les autres se sont couchés. P{winner.position} remporte {self.pot}.")
+                winner.win(self.pot)
+                self.pot = 0
+                return
+
+        # 6) Showdown
+        alive_players = [p for p in self.players if p.alive]
+        print("=== Showdown ===")
+        for p in alive_players:
+            print(f"Player {p.position} hand: {p.hand} -> rank: {self.hand_rank(p.hand, dealer.board)[0]}")
+
+        best_rank = -1
         winners = []
-
-        for player in self.players:
-            rank = self.hand_rank(player.hands,board)[0] # détermine un rank en fonction des cartes de la main du joueur et le board pour carrect dons l'état à cause du tuple
-
+        for p in alive_players:
+            rank = self.hand_rank(p.hand, dealer.board)[0]
             if rank > best_rank:
                 best_rank = rank
-                winners = [player]
-
+                winners = [p]
             elif rank == best_rank:
-                winners.append(player)
+                winners.append(p)
 
-        if len(winners) > 1:
-            split = self.pot // len(winners) # split le pot en fonction du nombre de joueur mais manque de détail (ex: si on mise plus que l'adversaire on  doit recevoir autant de jeton miser facile à faire mais juste flemme il est tard ect) ( à revoir)
-            for winner in winners:
-                winner.win(split) 
-            self.pot = 0
+        if len(winners) == 1:
+            winners[0].win(self.pot)
+            print(f"Player {winners[0].position} gagne le pot de {self.pot} (stack {winners[0].stack}).")
+        else:
+            share = self.pot // len(winners)
+            for w in winners:
+                w.win(share)
+            print(f"Pot partagé entre {[w.position for w in winners]}, chacun reçoit {share}.")
 
+        self.pot = 0
         return winners
 
-
-    def hand_rank(self, hand, board): # la fonction est un peu trop pointu je pense il faut mieux là rendre plus simple avec juste un return  d'un valeur 1 à 9 en fonction de la valeur de la main et quand on aura bvesoin d'afficher deux pair ect il faudrait le faire après parce que sinon à utiliser ça devient très chiant
+    # ---------- hand_rank (copier/ton implémentation existante) ----------
+    def hand_rank(self, hand, board):
         """
         Retourne la meilleure combinaison possible avec hand + board.
-        Retourne un tuple (rang, description, cartes) où rang est un entier (1=plus faible, 9=plus fort)
+        Retourne un tuple (rang, description_or_cards)
+        rang: 1=HighCard ... 9=StraightFlush
         """
         cards = hand + board
         if len(cards) < 5:
             return (1, cards)
 
-        # Extraire valeurs et couleurs
-        values = [card[1] for card in cards]  # card[1] = valeur
-        suits = [card[0] for card in cards]   # card[0] = couleur
+        values = [card[1] for card in cards]
+        suits = [card[0] for card in cards]
         num_values = [VALUE_MAP[v] for v in values]
         num_values.sort(reverse=True)
 
-        # Compter les occurrences des valeurs et couleurs
         value_counts = Counter(values)
         suit_counts = Counter(suits)
 
-        # Quinte Flush (9)
+        # Straight Flush (9)
         if max(suit_counts.values()) >= 5:
             for suit in suit_counts:
                 if suit_counts[suit] >= 5:
@@ -170,91 +296,54 @@ class Poker:
                     for i in range(len(suit_values) - 4):
                         if suit_values[i] - suit_values[i + 4] == 4 and len(set(suit_values[i:i+5])) == 5:
                             high_card = list(VALUE_MAP.keys())[list(VALUE_MAP.values()).index(suit_values[i])]
-                            return (9, f"Straight Flush, {VALUE_NAMES[high_card]} high", 
-                                    [(suit, v) for v in [list(VALUE_MAP.keys())[list(VALUE_MAP.values()).index(val)] 
-                                                        for val in suit_values[i:i+5]]])
-                        # Cas spécial : quinte flush à l'As (As bas)
-                        if suit_values[:5] == [14, 5, 4, 3, 2]:
-                            return (9, [(suit, v) for v in ['A', '5', '4', '3', '2']])
+                            return (9, f"Straight Flush, {VALUE_NAMES[high_card]} high")
+                    # wheel (A-5) flush
+                    if suit_values[:5] == [14, 5, 4, 3, 2]:
+                        return (9, "Wheel Straight Flush (A-5)")
 
-        # Carré (8)
+        # Four of a kind (8)
         for value, count in value_counts.items():
             if count == 4:
-                kicker = max([v for v in num_values if v != VALUE_MAP[value]])
-                kicker_card = list(VALUE_MAP.keys())[list(VALUE_MAP.values()).index(kicker)]
-                return (8, [(s, value) for s in colors if (s, value) in cards] + 
-                        [(s, kicker_card) for s in colors if (s, kicker_card) in cards])
+                return (8, f"Four of a kind {value}")
 
         # Full House (7)
         if 3 in value_counts.values() and 2 in value_counts.values():
-            three = max([k for k, v in value_counts.items() if v == 3], key=lambda x: VALUE_MAP[x])
-            pair = max([k for k, v in value_counts.items() if v == 2], key=lambda x: VALUE_MAP[x])
-            return (7, [(s, three) for s in colors if (s, three) in cards] +
-                    [(s, pair) for s in colors if (s, pair) in cards])
+            return (7, "Full House")
 
-        # Couleur (6)
+        # Flush (6)
         if max(suit_counts.values()) >= 5:
-            suit = max(suit_counts, key=suit_counts.get)
-            flush_cards = sorted([card for card in cards if card[0] == suit], 
-                               key=lambda x: VALUE_MAP[x[1]], reverse=True)[:5]
-            high_card = flush_cards[0][1]
-            return (6, flush_cards)
+            return (6, "Flush")
 
-        # Quinte (5)
+        # Straight (5)
         unique_values = sorted(set(num_values), reverse=True)
         for i in range(len(unique_values) - 4):
             if unique_values[i] - unique_values[i + 4] == 4 and len(set(unique_values[i:i+5])) == 5:
-                high_card = list(VALUE_MAP.keys())[list(VALUE_MAP.values()).index(unique_values[i])]
-                return (5, [(s, k) for k, v in VALUE_MAP.items() for s in colors 
-                         if v in unique_values[i:i+5] and (s, k) in cards])
-        # Cas spécial : quinte à l'As (As bas)
+                return (5, "Straight")
         if set([14, 5, 4, 3, 2]).issubset(set(num_values)):
-            return (5, [(s, k) for k, v in VALUE_MAP.items() for s in colors 
-                     if v in [14, 5, 4, 3, 2] and (s, k) in cards])
+            return (5, "Wheel Straight (A-5)")
 
-        # Brelan (4)
+        # Three of a kind (4)
         if 3 in value_counts.values():
-            three = max([k for k, v in value_counts.items() if v == 3], key=lambda x: VALUE_MAP[x])
-            kickers = sorted([v for v in num_values if v != VALUE_MAP[three]], reverse=True)[:2]
-            kicker_cards = [k for k, v in VALUE_MAP.items() if v in kickers]
-            return (4, [(s, three) for s in colors if (s, three) in cards] +
-                    [(s, k) for k in kicker_cards for s in colors if (s, k) in cards])
+            return (4, "Three of a kind")
 
-        # Double Paire (3)
-        pairs = [k for k, v in value_counts.items() if v == 2]
-        if len(pairs) >= 2:
-            pairs = sorted(pairs, key=lambda x: VALUE_MAP[x], reverse=True)[:2]
-            kicker = max([v for v in num_values if v not in [VALUE_MAP[p] for p in pairs]])
-            kicker_card = list(VALUE_MAP.keys())[list(VALUE_MAP.values()).index(kicker)]
-            return (3, [(s, p) for p in pairs for s in colors if (s, p) in cards] +
-                    [(s, kicker_card) for s in colors if (s, kicker_card) in cards])
+        # Two Pair (3)
+        if len([k for k, v in value_counts.items() if v == 2]) >= 2:
+            return (3, "Two pair")
 
-        # Paire (2)
+        # One Pair (2)
         if 2 in value_counts.values():
-            pair = max([k for k, v in value_counts.items() if v == 2], key=lambda x: VALUE_MAP[x])
-            kickers = sorted([v for v in num_values if v != VALUE_MAP[pair]], reverse=True)[:3]
-            kicker_cards = [k for k, v in VALUE_MAP.items() if v in kickers]
-            return (2, [(s, pair) for s in colors if (s, pair) in cards] +
-                    [(s, k) for k in kicker_cards for s in colors if (s, k) in cards])
+            return (2, "One pair")
 
-        # Carte haute (1)
-        high_cards = sorted(cards, key=lambda x: VALUE_MAP[x[1]], reverse=True)[:5]
-        high_card = high_cards[0][1]
-        return (1, high_cards)
-    
+        # High card (1)
+        return (1, "High card")
+
 
 if __name__ == "__main__":
-    # Test simple : joueur avec une paire d'As
-    player_hand = [("hearts", "A"), ("clubs", "A")]  # deux As
-    board = [("diamonds", "K"), ("spades", "7"), ("clubs", "2"),
-             ("hearts", "9"), ("spades", "4")]       # board sans danger
+    # Exemple d'utilisation :
+    # On fixe la main du hero (connue)
+    hero_hand = [('H', 'A'), ('S', 'A')]  # As de cœur + As de pique
+    hero = Player(stack=1000, position=0, hand=hero_hand)
 
-    poker = Poker()
-    rank = poker.hand_rank(player_hand, board)
-
-    print("Main du joueur :", player_hand)
-    print("Board :", board)
-    print("Résultat :", rank)
-
-
-
+    dealer = Dealer(players_count=6)
+    game = Poker(hero)
+    winners = game.round(dealer)

@@ -1,3 +1,5 @@
+from poker import Player,Dealer
+import json
 class Stat:
     def __init__(self, players, board, main_character, pot, ranges, amount_to_call=0, stage=0, opponent_stats=None):
         """
@@ -11,7 +13,7 @@ class Stat:
         arg: stage --> Étape de la partie (0=flop, 1=turn, 2=river).
         arg: opponent_stats --> Dictionnaire des statistiques adverses (VPIP, PFR, AF) pour les calculs.
         """
-        self.players = players
+        self.players = [player for player in players if player.stack > 0]
         self.board = board
         self.main_character = main_character
         self.pot = pot
@@ -20,27 +22,81 @@ class Stat:
         self.stage = stage
         self.opponent_stats = opponent_stats
 
+        with open("preflop_equity.json", "r") as f:
+            self.initial_equity = json.load(f)
+        
+    def hand_to_string(self,hand):
+        """
+        Convertit une main en une chaîne standardisée (ex. 'AKs', '72o').
+        arg: hand --> Tuple de deux cartes, ex. (("H", "A"), ("C", "K")).
+        Retourne : Chaîne représentant la main.
+        """
+        values = sorted([self.poker.VALUE_MAP[card[1]] for card in hand], reverse=True)
+        suits = [card[0] for card in hand]
+        card1, card2 = hand[0][1], hand[1][1]
+        if card1 == card2:
+            return f"{card1}{card2}"  # Ex. : "AA"
+        is_suited = suits[0] == suits[1]
+        return f"{card1}{card2}s" if is_suited else f"{card1}{card2}o"  # Ex. : "AKs", "AKo"
+
+
+    def hand_good(self,hand):
+        pass
+
+
     def pot_odds(self):
         """
         Calcule l'équité minimale nécessaire (%) pour qu'un call soit rentable, basé sur la mise à payer et la taille du pot.
         Formule : amount_to_call / (pot + amount_to_call).
         """
         return self.amount_to_call / (self.pot + self.amount_to_call)
+    
+    def equity(self,player):
+        """
+        Calcule l'équité de la main du joueur principal contre les ranges adverses, en utilisant Monte-Carlo ou combinatoire.
+        """
+        if self.stage == 0:  #Preflop
+            hand = self.hand_to_string(self.main_character.hands)
+            if player in self.ranges and hand in self.initial_equity:
+                total_equity = 0
+                total_proba = 0
+                for opp_hand, prob in self.ranges[player]:
+                    opp_hand = self.hand_to_string(opp_hand)    
+                    if opp_hand in self.initial_equity[hand]:
+                        total_equityequity += self.initial_equity[hand][opp_hand] * prob
+                        total_proba += prob
+                        pass
+                
+                 
+            
 
-    def EV_call(self, equity):
+            
+                
+            
+        
+
+    def EV_call(self,player):
         """
         Calcule l'espérance de valeur (EV) d'un call en jetons, sur le long terme.
         Formule : equity * (pot + amount_to_call) - (1 - equity) * amount_to_call.
         arg: equity --> Équité de la main principale contre la range adverse.
         """
-        return equity * (self.pot + self.amount_to_call) - (1 - equity) * self.amount_to_call
+        equity = self.equity(player)
+        pot = self.poker.pot
+        return equity * (pot + self.amount_to_call) - (1 - equity) * self.amount_to_call
 
     def EV_bet(self):
         """
         Calcule l'espérance de valeur d'un bet (ou bluff) en fonction du pot, de l'EV_call et de la fold equity.
         Formule : FE * pot + (1 - FE) * EV_call.
         """
-        pass
+        fe = self.estimate_fold_equity()
+        
+        return fe * self.pot + (1 - fe ) * self.EV_call()
+    
+
+        
+
 
     def EV_fold(self):
         """
@@ -53,7 +109,7 @@ class Stat:
         Calcule la Minimum Defense Frequency (MDF), fréquence minimale pour défendre contre un bluff.
         Formule : pot / (pot + bet).
         """
-        pass
+        return self.pot / (self.pot + self.amount_to_call)
 
     def Monte_Carlo(self):
         """
@@ -61,17 +117,19 @@ class Stat:
         """
         pass
 
-    def equity(self):
-        """
-        Calcule l'équité de la main du joueur principal contre les ranges adverses, en utilisant Monte-Carlo ou combinatoire.
-        """
-        pass
+    
 
-    def fold_equity(self):
+    def estimate_fold_equity(self):
         """
-        Estime la fold equity (probabilité que l'adversaire se couche) via MDF ou analyse range-vs-range.
+        Estime la fold equity (probabilité que l'adversaire se couche)
+        Args:
+            player: Objet Player (adversaire)
+            bet_size: Taille de la mise
+        Returns:
+            float: Fold equity (0 à 1)
         """
         pass
+        
 
     def outs(self):
         """
@@ -124,7 +182,7 @@ class FoldEquityEstimator:
         Calcule la fold equity via un prior théorique (MDF).
         Formule : 1 - (pot / (pot + bet)).
         """
-        pass
+        return 1 - (pot/ (pot + bet))
 
     def estimate_range_based(self, villain_range, board, sizing):
         """

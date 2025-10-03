@@ -6,7 +6,3 @@ def jeu():
     for posc in range(len(couleur)):
         for posv in range(len(valeur)):
             paquet.append([valeur[posv], couleur[posc]])
-
-    print(paquet)
-
-jeu()

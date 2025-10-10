@@ -13,20 +13,16 @@ class Deal:
             for valeur in cls.valeurs:
                 paquet.append([valeur, couleur])
         return paquet
-    
 
     def melanger(self):
         from random import shuffle
         shuffle(self.paquet)
 
-
-
-    def distribuer(self, n):
+    def distribuer(self, n:str):
         pass
 
-    def gestion_cards_on_board(self):
+    def board(self):
         pass
-
 
     def 
 

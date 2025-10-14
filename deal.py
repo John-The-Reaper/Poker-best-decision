@@ -2,27 +2,41 @@ from random import shuffle
 
 class Deal:    
     def __init__(self):
-        self.cards = self.cards_init()
-        self.board = []
+
         self.colors = ['D', 'H', 'S', 'C']  # Diamond: carreau , Heart: coeur, Spade: pique, Club: trèfle
         self.values = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
+        self.cards = self.cards_init()
+        self.board = []
+        self.state = 0
     
     def cards_init(self):
         """
         Initialisation du paquet de carte 
         """
-        self.cards = [(color, value) for color in colors for value in values]
+        self.cards = [(color, value) for color in self.colors for value in self.values]
         shuffle(self.cards)
+        return self.cards
 
-    def distribuer(self):
+    def deal_player_hand(self):
         """
-        Distribue les mains aléatoirement aux joueurs via les class et les retire du jeu
-        -- # -- FONCTION A FAIRE UNE FOIS QUE LES CLASS JOUEURS SONT INITIALISES -- # -- 
+        Distribue une main aléatoirement à un joueur et retire les cartes du jeu
         """
-        pass
+        main = [self.cards.pop() for _ in range(2)]
+        return [main]
 
-    def board(self, ):
+    def deal_board(self):
         """
-        Gère les différentes étapes de la partie qui concerne le board : flop, turn, river
+        Gère les différentes étapes de la partie qui concerne le board : 1 : flop, 2 : turn, 3 :river
+        Renvoie le board complet 
         """
-        pass
+        self.state += 1
+        if self.state == 1:
+            # Flop
+            self.board = [self.cards.pop() for _ in range(3)]
+            return self.board
+        elif self.state == 2:
+            # Après le flop on return forcément qu'une carte
+            self.board.append(self.cards.pop())
+            return [self.board]
+        
+        assert self.board < 4

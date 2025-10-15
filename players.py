@@ -4,8 +4,8 @@ class players():
     def __init__(self, name, hand, win_chance, aggressiveness):
         self.name = name
         self.hand = hand
-        self.win_chance = win_chance
-        self.aggressiveness = aggressiveness
+        self.win_chance = win_chance #importé depuis stats.py
+        self.aggressiveness = aggressiveness #chosis en fonction du joueur
 
     def bet_level(self):
         '''

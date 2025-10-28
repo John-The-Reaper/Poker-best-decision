@@ -26,8 +26,5 @@ class Calling_station():
             return "fold"
 
 
-    stack_percent(win_chance)
-
-
 objet = Tag(win_chance=0.5, position = False, stack=100)
 print(objet.stack_percent(objet.win_chance))

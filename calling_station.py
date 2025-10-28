@@ -2,11 +2,10 @@ import numpy as np
 # from stats.py import stat
 
 class Calling_station():
-    def __init__(self, win_chance, position, stack, amount_to_call): 
+    def __init__(self, win_chance, position, stack): 
         self.win_chance = win_chance
         self.position = position
         self.stack = stack
-        self.amount_to_call = amount_to_call
 
         #Parameters
         self.min_bet = 0.1
@@ -19,7 +18,7 @@ class Calling_station():
         result = self.min_bet + (self.max_bet - self.min_bet) / (1 + np.exp(exponent_input))
         return round(result,2) #renvoie 2 chiffres après la virgule
     
-    def action(self):
+    def action(self, amount_to_call):
         if self.amount_to_call <= self.stack:  # Call dès qu'il peut
             return "call"
         elif self.amount_to_call > self.stack: # fold si pas assez pour Call

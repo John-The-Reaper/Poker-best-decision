@@ -20,9 +20,9 @@ class Tag():
         return round(result,2) #renvoie 2 chiffres après la virgule
     
     def action(self):
-        if self.amount_to_call <= self.stack:  # Fallow dès qu'il peut
-            return "Fallow"
-        elif self.amount_to_call > self.stack: # fold si pas assez pour Fallow
+        if self.amount_to_call <= self.stack:  # Call dès qu'il peut
+            return "call"
+        elif self.amount_to_call > self.stack: # fold si pas assez pour Call
             return "Fold"
 
 

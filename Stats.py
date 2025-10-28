@@ -1,4 +1,4 @@
-from poker import Player,Dealer
+from poker import Player,Deal
 import json
 class Stat:
     def __init__(self, players, board, main_character, pot, ranges, amount_to_call=0, stage=0, opponent_stats=None):
@@ -25,23 +25,6 @@ class Stat:
         with open("preflop_equity.json", "r") as f:
             self.initial_equity = json.load(f)
         
-    def hand_to_string(self,hand):
-        """
-        Convertit une main en une chaîne standardisée (ex. 'AKs', '72o').
-        arg: hand --> Tuple de deux cartes, ex. (("H", "A"), ("C", "K")).
-        Retourne : Chaîne représentant la main.
-        """
-        values = sorted([self.poker.VALUE_MAP[card[1]] for card in hand], reverse=True)
-        suits = [card[0] for card in hand]
-        card1, card2 = hand[0][1], hand[1][1]
-        if card1 == card2:
-            return f"{card1}{card2}"  # Ex. : "AA"
-        is_suited = suits[0] == suits[1]
-        return f"{card1}{card2}s" if is_suited else f"{card1}{card2}o"  # Ex. : "AKs", "AKo"
-
-
-    def hand_good(self,hand):
-        pass
 
 
     def pot_odds(self):
@@ -66,12 +49,6 @@ class Stat:
                         total_equityequity += self.initial_equity[hand][opp_hand] * prob
                         total_proba += prob
                         pass
-                
-                 
-            
-
-            
-                
             
         
 
@@ -95,9 +72,7 @@ class Stat:
         return fe * self.pot + (1 - fe ) * self.EV_call()
     
 
-        
-
-
+    
     def EV_fold(self):
         """
         Calcule l'espérance de valeur d'un fold, généralement 0 car aucune perte/gain supplémentaire.
@@ -110,13 +85,43 @@ class Stat:
         Formule : pot / (pot + bet).
         """
         return self.pot / (self.pot + self.amount_to_call)
+    
+    def outs(self,hand,board,value_hand):
+        """
+        Calcule le nombre de cartes (outs) améliorant la main du joueur principal.
+        Retourne : Nombre d'outs (int) + list des outs (cartes) et probabilité de hit au turn/river.
+        """
+        outs_list = []  
+        for card in Deal.card_init() - self.card_board():
+            new_board = self.board().append(card).copy() # pour ne pas écraser self.board()
+            new_score = self.evaluate(hand,new_board) # à implémenter dans une autre class
+            if new_score > value_hand:
+                outs_list.append(card)
 
-    def Monte_Carlo(self):
+        nb_outs = len(outs_list)
+        cards_remaining = 52 - (2 + len(board))
+
+        prob_turn = nb_outs/cards_remaining * 100
+        prob_river = nb_outs/(cards_remaining-1)*100
+
+        return (nb_outs,outs_list,prob_river,prob_turn)
+    
+
+    
+
+    def Monte_Carlo(self,num_simulations, simulate_hand):
         """
         Effectue une simulation Monte-Carlo pour estimer l'équité ou autres probabilités via des tirages aléatoires de cartes.
         """
-        pass
+        win = 0  # bien test voire le recoder c'est juste le lien logique du programme 
+        for i in range(num_simulations):
+            if simulate_hand == self.outs(): 
+                win += 1
+        return win / num_simulations
 
+
+
+    
     
 
     def estimate_fold_equity(self):
@@ -131,12 +136,6 @@ class Stat:
         pass
         
 
-    def outs(self):
-        """
-        Calcule le nombre de cartes (outs) améliorant la main du joueur principal.
-        Retourne : Nombre d'outs (int) et probabilité de hit au turn/river.
-        """
-        pass
 
 class RangeManager:
     """
@@ -262,3 +261,6 @@ class Logger:
 
 
 # idée  gestions de l'incertitude + dictionnaire des données avec un tableau
+
+
+

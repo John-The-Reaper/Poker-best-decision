@@ -23,7 +23,7 @@ class Tag():
         if self.amount_to_call <= self.stack:  # Call dès qu'il peut
             return "call"
         elif self.amount_to_call > self.stack: # fold si pas assez pour Call
-            return "Fold"
+            return "fold"
 
 
     stack_percent(win_chance)

@@ -1,7 +1,7 @@
 import numpy as np
 # from stats.py import stat
 
-class Tag():
+class Calling_station():
     def __init__(self, win_chance, position, stack, amount_to_call): 
         self.win_chance = win_chance
         self.position = position

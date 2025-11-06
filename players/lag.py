@@ -8,8 +8,8 @@ class Lag():
         self.stack = stack
 
         #Parameters
-        self.min_bet = 0.2
-        self.max_bet = 1
+        self.min_bet = 0.20
+        self.max_bet = 1.00
         self.behavior_level = 0.40
         self.aggressiveness = 15.0
 

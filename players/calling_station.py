@@ -1,7 +1,7 @@
 import numpy as np # <-- Correction 1 : Import de numpy
 # from stats.py import stat
 
-class Maniac():
+class Nit():
     def __init__(self, stack): 
         self.stack = stack
         self.win_chance = 0
@@ -10,6 +10,13 @@ class Maniac():
         self.min_bet = 0.2
         self.max_bet = 1
         self.behavior_level = 0.40
+        self.aggressiveness = 15.0
+
+
+        #Parameters
+        self.min_bet = 0.01
+        self.max_bet = 0.60
+        self.behavior_level = 0.75
         self.aggressiveness = 15.0
 
     def stack_percent(self, win_chance): #calcul le pourcentage de la stack que le joueur veux miser
@@ -48,10 +55,10 @@ class Maniac():
 
         elif amount_to_call > bot_bet:
             return {"fold": True}
+        
 
 
 
 
-#objet = Maniac(stack=100)
-#print(objet.action(50, "utg"))
-
+#objet = Nit(win_chance=0.5, position = False, stack=100)
+#print(objet.stack_percent(objet.win_chance))

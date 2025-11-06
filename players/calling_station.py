@@ -14,10 +14,10 @@ class Tag():
 
 
         #Parameters
-        self.min_bet = 0.1
-        self.max_bet = 0.9
-        self.behavior_level = 0.55
-        self.aggressiveness = 5.0
+        self.min_bet = 0.05
+        self.max_bet = 0.20
+        self.behavior_level = 0.50
+        self.aggressiveness = 2.0
 
     def stack_percent(self, win_chance): #calcul le pourcentage de la stack que le joueur veux miser
         exponent_input = -self.aggressiveness * (win_chance - self.behavior_level)

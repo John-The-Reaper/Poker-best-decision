@@ -2,10 +2,16 @@ import numpy as np
 # from stats.py import stat
 
 class Calling_station():
-    def __init__(self, position, stack): 
-        self.win_chance = 0.50
-        self.position = position
+    def __init__(self, stack): 
         self.stack = stack
+        self.win_chance = 0
+
+        #Parameters
+        self.min_bet = 0.2
+        self.max_bet = 1
+        self.behavior_level = 0.40
+        self.aggressiveness = 15.0
+
 
         #Parameters
         self.min_bet = 0.1
@@ -13,12 +19,12 @@ class Calling_station():
         self.behavior_level = 0.55
         self.aggressiveness = 12.0
 
-    def stack_percent(self, win_chance, board, state): #calcul le pourcentage de la stack que le joueur veux miser
+    def stack_percent(self, win_chance): #calcul le pourcentage de la stack que le joueur veux miser
         exponent_input = -self.aggressiveness * (win_chance - self.behavior_level)
         result = self.min_bet + (self.max_bet - self.min_bet) / (1 + np.exp(exponent_input))
         return round(result,2) #renvoie 2 chiffres après la virgule
     
-    def action(self, amount_to_call):
+    def action(self, amount_to_call, position):
         if amount_to_call <= self.stack:  # Call dès qu'il peut
             self.stack -= amount_to_call
             return "call"

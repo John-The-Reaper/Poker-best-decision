@@ -1,17 +1,10 @@
 import numpy as np # <-- Correction 1 : Import de numpy
 # from stats.py import stat
 
-class Tag():
+class Calling_station():
     def __init__(self, stack): 
         self.stack = stack
-        self.win_chance = 0
-
-        #Parameters
-        self.min_bet = 0.2
-        self.max_bet = 1
-        self.behavior_level = 0.40
-        self.aggressiveness = 15.0
-
+        self.win_chance = 0.6
 
         #Parameters
         self.min_bet = 0.05

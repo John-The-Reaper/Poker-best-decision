@@ -8,10 +8,10 @@ class Maniac():
         self.stack = stack
 
         #Parameters
-        self.min_bet = 0.2
-        self.max_bet = 1
-        self.behavior_level = 0.40
-        self.aggressiveness = 15.0
+        self.min_bet = 0.50
+        self.max_bet = 1.00
+        self.behavior_level = 0.30
+        self.aggressiveness = 5.0
 
     def stack_percent(self, win_chance, board, state): #calcul le pourcentage de la stack que le joueur veux miser
         exponent_input = -self.aggressiveness * (win_chance - self.behavior_level)

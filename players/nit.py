@@ -11,7 +11,7 @@ class Nit():
         self.min_bet = 0.01
         self.max_bet = 0.60
         self.behavior_level = 0.75
-        self.aggressiveness = 15.0
+        self.aggressiveness = 5.0
 
     def stack_percent(self, win_chance, board, state): #calcul le pourcentage de la stack que le joueur veux miser
         exponent_input = -self.aggressiveness * (win_chance - self.behavior_level)

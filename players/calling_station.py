@@ -1,17 +1,10 @@
 import numpy as np # <-- Correction 1 : Import de numpy
 # from stats.py import stat
 
-class Lag():
+class Maniac():
     def __init__(self, stack): 
         self.stack = stack
         self.win_chance = 0
-
-        #Parameters
-        self.min_bet = 0.2
-        self.max_bet = 1
-        self.behavior_level = 0.40
-        self.aggressiveness = 15.0
-
 
         #Parameters
         self.min_bet = 0.2
@@ -23,7 +16,6 @@ class Lag():
         exponent_input = -self.aggressiveness * (win_chance - self.behavior_level)
         result = self.min_bet + (self.max_bet - self.min_bet) / (1 + np.exp(exponent_input))
         return round(result,2) #renvoie 2 chiffres après la virgule
-
     
     def action(self, amount_to_call, position):
         if position == "utg":
@@ -56,10 +48,10 @@ class Lag():
 
         elif amount_to_call > bot_bet:
             return {"fold": True}
-        
 
 
 
 
-#objet = Lag(win_chance=0.5, position = False, stack=100)
-#print(objet.stack_percent(objet.win_chance))
+#objet = Maniac(stack=100)
+#print(objet.action(50, "utg"))
+

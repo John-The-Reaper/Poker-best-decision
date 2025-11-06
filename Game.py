@@ -1,67 +1,82 @@
-"""
-
-import de toute les class des joueurs
-
-"""
-from calling_station.py import Calling_station
-from tag.py import Tag
-from lag.py import Lag
-from maniac.py import Maniac 
-from nit.py import Nit
-
-import json 
-from deal.py import Deal
+from players.calling_station import Calling_station
+from players.tag import Tag
+from players.lag import Lag
+from players.maniac import Maniac 
+from players.nit import Nit
+from Stats import Stat
+from deal import Deal
 from collections import Counter
 
+import json 
 
 class Game:
-  def __init__(self, big_blind:int, small_blind:int, stack:int):
-    """
-    Initalisation de toute les classes joueurs
-    """
-    self.deal = Deal()
-    self.players = [] # Tableau contenant les noms des joueurs
-    self.big_blind = big_blind
-    self.small_blind = small_blind  
-    self.pot = 0
-    self.state = self.deal.state
-    self.stak = stack
+    def __init__(self, big_blind=50, small_blind=25, stack=1000):
+        """
+        Initalisation de toute les classes joueurs
+        """
+        self.dealer = Deal()
+        self.players = [] # Tableau contenant les noms des joueurs
+        self.state = self.dealer.state
+        self.big_blind = big_blind
+        self.small_blind = small_blind  
+        self.pot = 0
+        self.stak = stack
 
-    # position, big_blind, small_blind, stack, hand
-    self.calling_station = Calling_station()
-    self.tag = Tag()
-    self.lag = Lag()
-    self.maniac = Maniac()
-    self.nit = Nit()
+        # nom_du_player, big_blind, small_blind, self.stack, self.dealer.deal_player_hand()
+        self.calling_station = Calling_station()
+        self.tag = Tag()
+        self.lag = Lag()
+        self.maniac = Maniac()
+        self.nit = Nit()
 
-    self.board = [self.deal.deal_board()]
+        self.board = [self.deal.deal_board()]
 
+    def game(self):
+        """
+        Génère le déroulement complte de la partie et renvoie un dataframe des données de la partie
+        Renvoie à la class Stat : 
+        - self.board
+        - self.player.hand
+        - self.player.position
+        - self.pot
+        - self.state
+        - amount_to_call 
+        Reçoit : win_chance
 
-  def game(self):
-    """
-    Génère le déroulement complte de la partie et renvoie un dataframe des données de la partie (il sera donné à la class stats)
-    Renvoie aux joueurs : 
-    - amount_to_call
-    - self.state # A voir si cette variable s'actualise bien
-    - self.board
-    - self.pot
-    """
-    pass
+        Renvoie aux joueurs : 
+        - amount_to_call
+        - win_rate # win rate pour la main en question
+        Reçoit du joueur : {"action": amount} 
+        --> Si Fold alors amount = None pareil pour check
+        """    
+        pass
 
-  def save_json(self, data: dict, path: str):
-    """
-    Sauvegarde des données de la partie dans un fichier JSON
-    """
-    with open(path, 'w') as json_file:
-      json.dump(data, json_file)
+    def simulation(n:int):
+        """
+        Génère une simulation de n game
+        - Acutalise les positions des joueurs 
+        - Augmente les blindes toute les 10 parties
+        - Save les données de chque partie dans le json
+        """
+        
 
-  def hand_rank(self, hand, board):
+        pass
+
+    def save_json(self, data: dict, path: str):
+        """
+        Sauvegarde des données de la partie dans un fichier JSON 
+        ### Probablement pas nécessaire
+        """
+        with open(path, 'w') as json_file:
+            json.dump(data, json_file)
+
+    def hand_rank(self, hand, board):
         """
         Retourne la meilleure combinaison possible avec hand + board.
         Retourne un tuple (rang, description_or_cards)
         rang: 1=HighCard ... 9=StraightFlush
+        
         """
-
         cards = hand + board
         if len(cards) < 5:
             return (1, cards)

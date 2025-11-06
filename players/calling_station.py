@@ -1,7 +1,7 @@
 import numpy as np # <-- Correction 1 : Import de numpy
 # from stats.py import stat
 
-class Nit():
+class Tag():
     def __init__(self, stack): 
         self.stack = stack
         self.win_chance = 0
@@ -14,10 +14,10 @@ class Nit():
 
 
         #Parameters
-        self.min_bet = 0.01
-        self.max_bet = 0.60
-        self.behavior_level = 0.75
-        self.aggressiveness = 15.0
+        self.min_bet = 0.1
+        self.max_bet = 0.9
+        self.behavior_level = 0.55
+        self.aggressiveness = 5.0
 
     def stack_percent(self, win_chance): #calcul le pourcentage de la stack que le joueur veux miser
         exponent_input = -self.aggressiveness * (win_chance - self.behavior_level)
@@ -56,9 +56,10 @@ class Nit():
         elif amount_to_call > bot_bet:
             return {"fold": True}
         
+        
 
 
 
 
-#objet = Nit(win_chance=0.5, position = False, stack=100)
+#objet = Tag(win_chance=0.5, position = False, stack=100)
 #print(objet.stack_percent(objet.win_chance))

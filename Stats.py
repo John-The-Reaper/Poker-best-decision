@@ -1,7 +1,7 @@
 import random
 import json
-from deal import Deal
-from game import Game
+from Deal import Deal
+from Game import Game
 from collections import Counter
 
 class Stat:
@@ -94,7 +94,6 @@ class Stat:
     def estimate_fold_equity(self):
         """
         Estime la fold equity (probabilité que l'adversaire se couche).
-        À implémenter plus tard selon les stats du joueur.
         float: Fold equity (0 à 1)
         """
         # Pour l'instant, retourne un prior basé sur MDF
@@ -111,13 +110,13 @@ class Stat:
         prob_turn = nb_outs/cards_remaining * 100
 
         prob_turn_or_river = 1 - ((cards_remaining - nb_outs) / cards_remaining) *
-                           ((cards_remaining - nb_outs - 1) / (cards_remaining - 1
+                           ((cards_remaining - nb_outs - 1) / (cards_remaining - 1))
         """
         outs_list = []
 
         card_board_now = self.board.copy()  # carte du board actuel en copy pour pas sup
         known_cards = hand + card_board_now
-
+        
         # Récupération de toutes les cartes depuis Deal
         deal = Deal()
         all_cards = deal.cards_init()
@@ -152,16 +151,7 @@ class Stat:
     
 
     def Monte_Carlo(self,num_simulations,opp_hand):
-        """
-        Effectue une simulation Monte-Carlo pour estimer l'équité ou autres probabilités via des tirages aléatoires de main adverse.
-
-         manque d'éfficacité, à améliorer plus tard
-         idée : for _ in range(num_simulations):
-            # Tirer 2 + cards_needed directement
-            sample = random.sample(available, 2 + cards_needed_for_board)
-            opp_hand = sample[:2]
-            board_cards = sample[2:]
-        """
+       
         win = 0
         tie = 0
 
@@ -177,12 +167,11 @@ class Stat:
 
             sim_available = available_cards.copy()
             random.shuffle(sim_available)  # mélange les cartes disponibles
-
-
             opp_hand = [sim_available.pop(), sim_available.pop()]  # en perdant deux cartes dans le pack pour simuler une main adverse et on supprime ces cartes du pack
 
             cards_needed = 5 - len(card_board_now)  # nombre de cartes à tirer pour compléter le board
-            final_board = card_board_now + [sim_available.pop() for _ in range(cards_needed)]  # complète le board pour avoir les 5 cartes du board finale (bien sur en se limitant au nombre de cartes déjà sur le board)
+            final_board = card_board_now + [sim_available.pop() for _ in range(cards_needed)]  # complète le board pour avoir les 5 cartes du board finale 
+                                                                                               # (bien sur en se limitant au nombre de cartes déjà sur le board)
 
             # en évalue les mains des joueurs avec Game
             game = Game(self.big_blind, self.small_blind, self.stack)
@@ -204,7 +193,7 @@ class Stat:
         """
         Calcule l'équité de la main du joueur principal contre les ranges adverses, en utilisant Monte-Carlo ou combinatoire.
         """
-        num_simulations = 1000
+        num_simulations = 1000000000
         return self.Monte_Carlo(num_simulations, player)
 
         
@@ -233,15 +222,10 @@ class Stat:
         
 
 
-class RangeManager:
+
     """
     Gère les ranges des joueurs pour les calculs statistiques : stockage et réduction des combos probables.
     """
-    def __init__(self, ranges):
-        """
-        Initialise avec les ranges des adversaires, ex. {player: [('AKs', 0.8), ...]}.
-        """
-        pass
 
     def apply_action(self, action, sizing, board):
         """
@@ -255,12 +239,9 @@ class RangeManager:
         """
         pass
 
-class EquityEngine:
-    """
-    Calcule l'équité d'une main ou range contre une autre pour les décisions basées sur l'EV.
-    """
     def compute_equity(self, hero_range, villain_range, board):
         """
+        Calcule l'équité d'une main ou range contre une autre pour les décisions basées sur l'EV.
         Calcule l'équité via méthode combinatoire (exacte) ou Monte-Carlo (approximative).
         arg: hero_range --> Range ou main du joueur principal.
         arg: villain_range --> Range de l'adversaire.
@@ -268,24 +249,6 @@ class EquityEngine:
         """
         pass
 
-class FoldEquityEstimator:
-    """
-    Estime la probabilité qu’un adversaire se couche face à un bet, pour les calculs d'EV.
-    """
-    def estimate_prior(self, pot, bet):
-        """
-        Calcule la fold equity via un prior théorique (MDF).
-        Formule : 1 - (pot / (pot + bet)).
-        """
-        return 1 - (pot/ (pot + bet))
-
-    def estimate_range_based(self, villain_range, board, sizing):
-        """
-        Estime la fold equity en comptant les combos qui foldent vs continuent dans la range adverse.
-        """
-        pass
-
-class UncertaintyManager:
     """
     Fournit des intervalles de confiance pour les estimations statistiques (ex. : fold equity).
     """
@@ -305,7 +268,7 @@ class UncertaintyManager:
         """
         pass
 
-class SizingOptimizer:
+
     """
     Optimise la taille des mises en calculant l'EV pour différentes options.
     """
@@ -315,12 +278,13 @@ class SizingOptimizer:
         """
         pass
 
-class EVSimulator:
+
     """
     Calcule l'EV d'un call en tenant compte du pot futur et de l'équité.
     """
     def compute_ev_call(self, hero_range, villain_range, board, pot, bet):
         """
+        Calcule l'EV d'un call en tenant compte du pot futur et de l'équité.
         Estime l'EV si l'adversaire call, en utilisant l'équité et le pot futur.
         arg: hero_range --> Range ou main du joueur principal.
         arg: villain_range --> Range de l'adversaire.
@@ -330,10 +294,6 @@ class EVSimulator:
         """
         pass
 
-class MultiwayHandler:
-    """
-    Gère les calculs statistiques pour les pots multi-joueurs.
-    """
     def combine_fe(self, fe_list):
         """
         Combine les fold equities individuelles pour une probabilité globale de fold.
@@ -342,7 +302,7 @@ class MultiwayHandler:
         """
         pass
 
-class Logger:
+
     """
     Enregistre les calculs statistiques (FE, EV, équité) pour audit et analyse.
     """
@@ -356,5 +316,18 @@ class Logger:
         pass
 
 
-# idée  gestions de l'incertitude + dictionnaire des données avec un tableau
+    def win_chance_and_choice(self,hand,board):
+        """
+        Calcule la probabilité de gagner avec une main donnée contre les/une main adverse spécifique.
+        Utilise Monte-Carlo pour simuler les tirages restants.
+        arg: hand --> Main du joueur principal.
+        arg: board --> Cartes du board.
+        Retourne : Probabilité de gagner (float entre 0 et 1) en prenant en compte toutes les fonctions ( EV etc.)
+        +  le nombre de jeton qu'il faudra miser pour avoir la meilleurs rentabilité de la main.
+        Retourne : (win_chance, choice, amount)
+         win_chance : probabilité de gagner (float entre 0 et 1)
+         choice : 'fold', 'call', 'bet'
+         amount : montant optimal à miser pour maximiser la rentabilité de la main.
+        """
+        pass
 

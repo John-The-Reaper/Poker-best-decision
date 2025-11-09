@@ -4,13 +4,13 @@ def hand_rank( hand, board):
         """
         Retourne la meilleure combinaison possible avec hand + board en lui attribuant une valeur numérique (1-9)
         """
-        values = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
+        value_list = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 
         cards = hand + board
         if len(cards) < 5: # Comme la fonction est utilisée à la fin
             return (1, cards)
 
-        value_map = {v: i+2 for i, v in enumerate(values)}
+        value_map = {v: i+2 for i, v in enumerate(value_list)}
         suits = [card[0] for card in cards]
         values = [card[1] for card in cards]
         num_values = [value_map[v] for v in values]
@@ -26,7 +26,7 @@ def hand_rank( hand, board):
                     suit_num_values = sorted([value_map[card[1]] for card in cards if card[0] == suit], reverse=True)
                     for i in range(len(suit_num_values) - 4):
                         if suit_num_values[i] - suit_num_values[i + 4] == 4 and len(set(suit_num_values[i:i+5])) == 5:
-                            high_card = values[suit_num_values[i] - 2]
+                            high_card = value_list[suit_num_values[i] - 2]
                             return (9, f"Straight Flush, {high_card} high")
                     if set([14, 5, 4, 3, 2]).issubset(set(suit_num_values)):
                         return (9, "Wheel Straight Flush (A-5)")
@@ -66,5 +66,3 @@ def hand_rank( hand, board):
 
         # High card (1)
         return (1, "High card")
-
-

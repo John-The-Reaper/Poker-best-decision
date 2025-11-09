@@ -95,9 +95,6 @@ class Game:
     def _betting_round(self, active_players, pot, current_bets, board, state):
         max_rounds = 10
         round_count = 0
-        #################################################################
-        optimal_bet = 0
-        optimal_choice = "check"
         
         while round_count < max_rounds:
             round_count += 1
@@ -109,6 +106,12 @@ class Game:
                     continue
                 
                 amount_to_call = current_bet - current_bets[id(player)]
+                equity, optimal_bet, optimal_choice = self.get_stats(
+                    player_hand=player.hand,
+                    board=board,
+                    pot=pot,
+                    amount_to_call=amount_to_call
+                )
                 action = self._get_player_action(player, amount_to_call, optimal_bet, optimal_choice)
 
                 # 🩵 FIX : on récupère le montant sans re-retirer du stack (les joueurs l'ont déjà fait)
@@ -159,6 +162,7 @@ class Game:
         try:
             position_name = self._get_position_name(player.position)
             result = player.action(amount_to_call, position_name, optimal_bet, optimal_choice)
+            print(result)
             if isinstance(result, str):
                 return {result: True}
             return result
@@ -362,26 +366,10 @@ class Game:
         # Assurer que board n'est pas None
         if board is None:
             board = []
-        return Stat(hand=player_hand, board=board, pot=pot, amount_to_call=amount_to_call)
-    
-    def calculate_equity(self, stats, player_hand, board, num_simulations=500):
-        """
-        Calcule l'équité d'une main via Monte Carlo
-        
-        Args:
-            player_hand: Main du joueur
-            board: Board actuel (peut être None ou vide)
-            num_simulations: Nombre de simulations
-            
-        Returns:
-            float: Équité (0 à 1)
-        """
-        # Assurer que board n'est pas None
-        if board is None:
-            board = []
-        return stats.win_chance_and_choice(player_hand, board, self.hand_rank, num_simulations)
 
-    
+        stat = Stat(hand=player_hand, board=board, pot=pot, amount_to_call=amount_to_call)
+        return stat.win_chance_and_choice()
+
     def hand_rank(self, hand, board):
         """
         Retourne la meilleure combinaison possible avec hand + board en lui attribuant une valeur numérique (1-9)

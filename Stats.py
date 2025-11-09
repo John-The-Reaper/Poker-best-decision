@@ -1,6 +1,6 @@
 import random
 import json
-from Deal import Deal
+from deal import Deal
 from utils import hand_rank
 from collections import Counter
 

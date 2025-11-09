@@ -22,7 +22,7 @@ class Deal:
         Distribue une main aléatoirement à un joueur et retire les cartes du jeu
         """
         main = [self.cards.pop() for _ in range(2)]
-        return [main]
+        return main
 
     def deal_board(self):
         """
@@ -30,13 +30,14 @@ class Deal:
         Renvoie le board complet 
         """
         self.state += 1
+        assert self.state < 5
         if self.state == 1:
             # Flop
             self.board = [self.cards.pop() for _ in range(3)]
             return self.board
-        elif self.state == 2:
+        else:
             # Après le flop on return forcément qu'une carte
             self.board.append(self.cards.pop())
-            return [self.board]
+            return self.board
         
-        assert self.board < 4
+        

@@ -1,17 +1,17 @@
 import random
 import json
-from Deal import Deal
+from deal import Deal
 from Game import Game
 from collections import Counter
 
 class Stat:
-    def __init__(self, players, board, main_character, pot, amount_to_call, hand, stage, position_main_character, opponent_stats):
+    def __init__(self, board, pot, amount_to_call, hand, stage, main_character=None, players=None, position_main_character=None, opponent_stats=None):
         """
         Récupère les données pour les calculs statistiques du poker sur les class Deal, Player, Game.
         arg: players --> Liste des stacks et positions des adversaires (issus de la ).
         arg: board --> Liste des cartes du board, ex. [('H', 'A'), ('D', 'K')].
         arg: main_character --> Joueur principal (objet Player).
-        arg: pot --> Taille du pot (issu de la classe Dealer).
+        arg: pot --> Taille du pot (issu de la classe Game).
         arg: amount_to_call --> Montant à payer pour suivre.
         arg: hand --> Main du joueur principal (ex. [('H', 'A'), ('D', 'K')]).
         arg: stage --> Étape de la partie (0=preflop, 1=flop, 2=turn, 3=river).
@@ -189,11 +189,10 @@ class Stat:
     
 
 
-    def equity_range(self, player):
+    def equity_range(self, player,num_simulations=1000000):
         """
         Calcule l'équité de la main du joueur principal contre les ranges adverses, en utilisant Monte-Carlo ou combinatoire.
         """
-        num_simulations = 1000000000
         return self.Monte_Carlo(num_simulations, player)
 
         
@@ -231,7 +230,7 @@ class Stat:
         """
         Réduit la range d'un joueur selon son action (bet/call/raise/fold) et le sizing, en fonction du board.
         """
-        pass
+        
 
     def get_distribution(self):
         """
@@ -316,18 +315,85 @@ class Stat:
         pass
 
 
-    def win_chance_and_choice(self,hand,board):
-        """
-        Calcule la probabilité de gagner avec une main donnée contre les/une main adverse spécifique.
-        Utilise Monte-Carlo pour simuler les tirages restants.
-        arg: hand --> Main du joueur principal.
-        arg: board --> Cartes du board.
-        Retourne : Probabilité de gagner (float entre 0 et 1) en prenant en compte toutes les fonctions ( EV etc.)
-        +  le nombre de jeton qu'il faudra miser pour avoir la meilleurs rentabilité de la main.
-        Retourne : (win_chance, choice, amount)
-         win_chance : probabilité de gagner (float entre 0 et 1)
-         choice : 'fold', 'call', 'bet'
-         amount : montant optimal à miser pour maximiser la rentabilité de la main.
-        """
-        pass
+    def win_chance_and_choice(self, hand, board, players, num_simulations=1000000):
+    
+        # Calculs avec les fonctiosn précédentes
+        equity = self.equity_range(players,num_simulations)
+        pot_odds = self.pot_odds()
+        mdf = self.MDF()
 
+        # Calculer les EV pour chaque action
+        ev_fold = self.EV_fold()  # Toujours 0
+        ev_call = self.EV_call(players)
+
+        # Si équité < pot odds, fold est optimal (call serait -EV)
+        if equity < pot_odds:
+            return equity, 'fold', 0
+
+        # Si équité >= pot odds mais pas assez forte pour bet
+        # Call si : pot_odds <= equity < (pot_odds + 0.15)
+        if pot_odds <= equity < (pot_odds + 0.15):
+            return equity, 'call', self.amount_to_call
+
+        # Si équité forte, on cherche le sizing optimal
+        # Tester différents sizings (% du pot)
+        bet_sizings = [0.33, 0.5, 0.66, 0.75, 1.0, 1.5, 2.0]  # Ratios du pot
+        best_ev = ev_call
+        best_sizing = 0
+        best_action = 'call'
+
+        for sizing_ratio in bet_sizings:
+            bet_amount = self.pot * sizing_ratio
+
+            # Limiter au stack disponible
+            if hasattr(self, 'stack'):
+                bet_amount = min(bet_amount, self.stack)
+
+            # Calculer l'EV de ce bet
+            ev_bet = self.EV_bet(bet_amount, players)
+
+            # Si cet EV est meilleur, on le garde
+            if ev_bet > best_ev:
+                best_ev = ev_bet
+                best_sizing = bet_amount
+                best_action = 'bet' if self.amount_to_call == 0 else 'raise'
+
+        # --- AJUSTEMENT SELON EQUITY vs MDF ---
+        # Plus l'équité dépasse le MDF, plus on peut bet agressivement
+        equity_over_mdf = equity - mdf
+
+        if equity_over_mdf > 0.3:
+            # Équité très forte (>30% au-dessus de MDF) : bet gros
+            optimal_sizing = self.pot * min(1.5, 0.5 + equity_over_mdf * 2)
+
+        elif equity_over_mdf > 0.2:
+            # Équité forte (20-30% au-dessus) : bet pot
+            optimal_sizing = self.pot * 1.0
+
+        elif equity_over_mdf > 0.1:
+            # Équité moyenne-forte (10-20% au-dessus) : bet 2/3 pot
+            optimal_sizing = self.pot * 0.66
+
+        else:
+            # Équité juste au-dessus de MDF : bet petit (1/3 pot) ou call
+            if best_action in ['bet', 'raise']:
+                optimal_sizing = self.pot * 0.33
+            else:
+                return equity, 'call', self.amount_to_call
+
+        # Limiter au stack disponible
+        if hasattr(self, 'stack'):
+            optimal_sizing = min(optimal_sizing, self.stack)
+
+        # Arrondir à l'entier le plus proche
+        optimal_sizing = round(optimal_sizing)
+
+        # Vérifier que le bet optimal a un meilleur EV que call
+        ev_optimal = self.EV_bet(optimal_sizing, players)
+
+        if ev_optimal > ev_call:
+            action = 'bet' if self.amount_to_call == 0 else 'raise'
+            return equity, action, optimal_sizing
+        else:
+            # Si bet n'est pas meilleur, on call
+            return equity, 'call', self.amount_to_call

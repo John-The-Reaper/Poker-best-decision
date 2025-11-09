@@ -3,7 +3,8 @@ from players.tag import Tag
 from players.lag import Lag
 from players.maniac import Maniac 
 from players.nit import Nit
-from Stats import Stat, win_chance_and_choice
+from players.best_choice import best_choice
+from Stats import Stat
 from deal import Deal
 from collections import Counter
 import json
@@ -23,15 +24,17 @@ class Game:
         self.lag = Lag(stack=stack)
         self.maniac = Maniac(stack=stack)
         self.nit = Nit(stack=stack)
+        self.best_choice = best_choice(stack=stack)
 
         self.calling_station.position = 0
         self.tag.position = 1
         self.lag.position = 2
         self.maniac.position = 3
         self.nit.position = 4
-        
-        self.players = [self.calling_station, self.tag, self.lag, self.maniac, self.nit]
-        self.player_names = ['calling_station', 'tag', 'lag', 'maniac', 'nit']
+        self.best_choice.position = 5
+
+        self.players = [self.calling_station, self.tag, self.lag, self.maniac, self.nit, self.best_choice]
+        self.player_names = ['calling_station', 'tag', 'lag', 'maniac', 'nit', 'best_choice']
 
     def game(self):
         dealer = Deal()
@@ -92,6 +95,9 @@ class Game:
     def _betting_round(self, active_players, pot, current_bets, board, state):
         max_rounds = 10
         round_count = 0
+        #################################################################
+        optimal_bet = 0
+        optimal_choice = "check"
         
         while round_count < max_rounds:
             round_count += 1
@@ -103,7 +109,7 @@ class Game:
                     continue
                 
                 amount_to_call = current_bet - current_bets[id(player)]
-                action = self._get_player_action(player, amount_to_call, board, state)
+                action = self._get_player_action(player, amount_to_call, optimal_bet, optimal_choice)
 
                 # 🩵 FIX : on récupère le montant sans re-retirer du stack (les joueurs l'ont déjà fait)
                 if 'fold' in action:
@@ -144,14 +150,15 @@ class Game:
             1: "small_blind",
             2: "big_blind",
             3: "utg",
-            4: "cutt_off"
+            4: "cutt_off",
+            5: "hijack"
         }
         return position_names.get(position, position)
 
-    def _get_player_action(self, player, amount_to_call, board, state):
+    def _get_player_action(self, player, amount_to_call, optimal_bet, optimal_choice):
         try:
             position_name = self._get_position_name(player.position)
-            result = player.action(amount_to_call, position_name)
+            result = player.action(amount_to_call, position_name, optimal_bet, optimal_choice)
             if isinstance(result, str):
                 return {result: True}
             return result
@@ -374,6 +381,7 @@ class Game:
             board = []
         return stats.win_chance_and_choice(player_hand, board, self.hand_rank, num_simulations)
 
+    
     def hand_rank(self, hand, board):
         """
         Retourne la meilleure combinaison possible avec hand + board en lui attribuant une valeur numérique (1-9)

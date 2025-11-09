@@ -1,7 +1,7 @@
 import random
 import json
 from deal import Deal
-from Game import Game
+from utils import hand_rank
 from collections import Counter
 
 class Stat:
@@ -123,12 +123,11 @@ class Stat:
         available_cards = [card for card in all_cards if card not in known_cards]  # cartes disponibles qui sont inconnues (ni board ni hand) !!!!!!! remplacer self.hand
 
         # initialiser une instance de Game pour utiliser hand_rank
-        game = Game(self.big_blind, self.small_blind, self.stack)
 
 
         for card in available_cards:
             new_board = card_board_now + [card] # pour ne pas écraser self.board()
-            new_score = game.hand_rank(hand, new_board)[0] # recupère le rang de la main avec la nouvelle carte ajoutée au board
+            new_score = hand_rank(self.hand, new_board)[0] # recupère le rang de la main avec la nouvelle carte ajoutée au board
             
             
             if new_score > value_hand:
@@ -173,10 +172,9 @@ class Stat:
             final_board = card_board_now + [sim_available.pop() for _ in range(cards_needed)]  # complète le board pour avoir les 5 cartes du board finale 
                                                                                                # (bien sur en se limitant au nombre de cartes déjà sur le board)
 
-            # en évalue les mains des joueurs avec Game
-            game = Game(self.big_blind, self.small_blind, self.stack)
-            hero_rank = game.hand_rank(self.hand, final_board)
-            villain_rank = game.hand_rank(opp_hand, final_board)
+            # en évalue les mains des joueurs avec hand_rank
+            hero_rank = hand_rank(self.hand, final_board)
+            villain_rank = hand_rank(opp_hand, final_board)
             # on compare les résultats
             test_btw_hands = hero_rank[0]
             test_btw_opp = villain_rank[0]

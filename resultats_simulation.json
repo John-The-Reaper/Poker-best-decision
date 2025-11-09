@@ -1,0 +1,1165 @@
+{
+  "total_games": 63,
+  "player_stats": {
+    "calling_station": {
+      "final_stack": 0,
+      "profit": -1000,
+      "wins": 5
+    },
+    "tag": {
+      "final_stack": 0,
+      "profit": -1000,
+      "wins": 0
+    },
+    "lag": {
+      "final_stack": 0,
+      "profit": -1000,
+      "wins": 19
+    },
+    "maniac": {
+      "final_stack": 0,
+      "profit": -1000,
+      "wins": 0
+    },
+    "nit": {
+      "final_stack": 0,
+      "profit": -1000,
+      "wins": 3
+    },
+    "best_choice": {
+      "final_stack": 6000,
+      "profit": 5000,
+      "wins": 41
+    }
+  },
+  "game_history": [
+    {
+      "game_number": 1,
+      "winner": "lag",
+      "pot": 75,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 1000,
+        "tag": 975,
+        "lag": 1025,
+        "maniac": 1000,
+        "nit": 1000,
+        "best_choice": 1000
+      }
+    },
+    {
+      "game_number": 2,
+      "winner": "best_choice",
+      "pot": 75,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 975,
+        "tag": 925,
+        "lag": 1025,
+        "maniac": 1000,
+        "nit": 1000,
+        "best_choice": 1075
+      }
+    },
+    {
+      "game_number": 3,
+      "winner": "best_choice",
+      "pot": 75,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 925,
+        "tag": 925,
+        "lag": 1025,
+        "maniac": 1000,
+        "nit": 975,
+        "best_choice": 1150
+      }
+    },
+    {
+      "game_number": 4,
+      "winner": "best_choice",
+      "pot": 75,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 925,
+        "tag": 925,
+        "lag": 1025,
+        "maniac": 975,
+        "nit": 925,
+        "best_choice": 1225
+      }
+    },
+    {
+      "game_number": 5,
+      "winner": "best_choice",
+      "pot": 75,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 925,
+        "tag": 925,
+        "lag": 1000,
+        "maniac": 925,
+        "nit": 925,
+        "best_choice": 1300
+      }
+    },
+    {
+      "game_number": 6,
+      "winner": "lag",
+      "pot": 75,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 925,
+        "tag": 900,
+        "lag": 1025,
+        "maniac": 925,
+        "nit": 925,
+        "best_choice": 1300
+      }
+    },
+    {
+      "game_number": 7,
+      "winner": "best_choice",
+      "pot": 75,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 900,
+        "tag": 850,
+        "lag": 1025,
+        "maniac": 925,
+        "nit": 925,
+        "best_choice": 1375
+      }
+    },
+    {
+      "game_number": 8,
+      "winner": "best_choice",
+      "pot": 75,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 850,
+        "tag": 850,
+        "lag": 1025,
+        "maniac": 925,
+        "nit": 900,
+        "best_choice": 1450
+      }
+    },
+    {
+      "game_number": 9,
+      "winner": "best_choice",
+      "pot": 75,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 850,
+        "tag": 850,
+        "lag": 1025,
+        "maniac": 900,
+        "nit": 850,
+        "best_choice": 1525
+      }
+    },
+    {
+      "game_number": 10,
+      "winner": "best_choice",
+      "pot": 75,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 850,
+        "tag": 850,
+        "lag": 1000,
+        "maniac": 850,
+        "nit": 850,
+        "best_choice": 1600
+      }
+    },
+    {
+      "game_number": 11,
+      "winner": "lag",
+      "pot": 112,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 850,
+        "tag": 813,
+        "lag": 1037,
+        "maniac": 850,
+        "nit": 850,
+        "best_choice": 1600
+      }
+    },
+    {
+      "game_number": 12,
+      "winner": "best_choice",
+      "pot": 112,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 813,
+        "tag": 738,
+        "lag": 1037,
+        "maniac": 850,
+        "nit": 850,
+        "best_choice": 1712
+      }
+    },
+    {
+      "game_number": 13,
+      "winner": "best_choice",
+      "pot": 112,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 738,
+        "tag": 738,
+        "lag": 1037,
+        "maniac": 850,
+        "nit": 813,
+        "best_choice": 1824
+      }
+    },
+    {
+      "game_number": 14,
+      "winner": "best_choice",
+      "pot": 112,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 738,
+        "tag": 738,
+        "lag": 1037,
+        "maniac": 813,
+        "nit": 738,
+        "best_choice": 1936
+      }
+    },
+    {
+      "game_number": 15,
+      "winner": "best_choice",
+      "pot": 112,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 738,
+        "tag": 738,
+        "lag": 1000,
+        "maniac": 738,
+        "nit": 738,
+        "best_choice": 2048
+      }
+    },
+    {
+      "game_number": 16,
+      "winner": "lag",
+      "pot": 112,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 738,
+        "tag": 701,
+        "lag": 1037,
+        "maniac": 738,
+        "nit": 738,
+        "best_choice": 2048
+      }
+    },
+    {
+      "game_number": 17,
+      "winner": "best_choice",
+      "pot": 112,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 701,
+        "tag": 626,
+        "lag": 1037,
+        "maniac": 738,
+        "nit": 738,
+        "best_choice": 2160
+      }
+    },
+    {
+      "game_number": 18,
+      "winner": "best_choice",
+      "pot": 112,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 626,
+        "tag": 626,
+        "lag": 1037,
+        "maniac": 738,
+        "nit": 701,
+        "best_choice": 2272
+      }
+    },
+    {
+      "game_number": 19,
+      "winner": "best_choice",
+      "pot": 112,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 626,
+        "tag": 626,
+        "lag": 1037,
+        "maniac": 701,
+        "nit": 626,
+        "best_choice": 2384
+      }
+    },
+    {
+      "game_number": 20,
+      "winner": "best_choice",
+      "pot": 112,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 626,
+        "tag": 626,
+        "lag": 1000,
+        "maniac": 626,
+        "nit": 626,
+        "best_choice": 2496
+      }
+    },
+    {
+      "game_number": 21,
+      "winner": "lag",
+      "pot": 167,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 626,
+        "tag": 571,
+        "lag": 1055,
+        "maniac": 626,
+        "nit": 626,
+        "best_choice": 2496
+      }
+    },
+    {
+      "game_number": 22,
+      "winner": "best_choice",
+      "pot": 167,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 571,
+        "tag": 459,
+        "lag": 1055,
+        "maniac": 626,
+        "nit": 626,
+        "best_choice": 2663
+      }
+    },
+    {
+      "game_number": 23,
+      "winner": "best_choice",
+      "pot": 167,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 459,
+        "tag": 459,
+        "lag": 1055,
+        "maniac": 626,
+        "nit": 571,
+        "best_choice": 2830
+      }
+    },
+    {
+      "game_number": 24,
+      "winner": "best_choice",
+      "pot": 167,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 459,
+        "tag": 459,
+        "lag": 1055,
+        "maniac": 571,
+        "nit": 459,
+        "best_choice": 2997
+      }
+    },
+    {
+      "game_number": 25,
+      "winner": "best_choice",
+      "pot": 167,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 459,
+        "tag": 459,
+        "lag": 1000,
+        "maniac": 459,
+        "nit": 459,
+        "best_choice": 3164
+      }
+    },
+    {
+      "game_number": 26,
+      "winner": "lag",
+      "pot": 167,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 459,
+        "tag": 404,
+        "lag": 1055,
+        "maniac": 459,
+        "nit": 459,
+        "best_choice": 3164
+      }
+    },
+    {
+      "game_number": 27,
+      "winner": "best_choice",
+      "pot": 167,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 404,
+        "tag": 292,
+        "lag": 1055,
+        "maniac": 459,
+        "nit": 459,
+        "best_choice": 3331
+      }
+    },
+    {
+      "game_number": 28,
+      "winner": "best_choice",
+      "pot": 167,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 292,
+        "tag": 292,
+        "lag": 1055,
+        "maniac": 459,
+        "nit": 404,
+        "best_choice": 3498
+      }
+    },
+    {
+      "game_number": 29,
+      "winner": "best_choice",
+      "pot": 167,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 292,
+        "tag": 292,
+        "lag": 1055,
+        "maniac": 404,
+        "nit": 292,
+        "best_choice": 3665
+      }
+    },
+    {
+      "game_number": 30,
+      "winner": "best_choice",
+      "pot": 167,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 292,
+        "tag": 292,
+        "lag": 1000,
+        "maniac": 292,
+        "nit": 292,
+        "best_choice": 3832
+      }
+    },
+    {
+      "game_number": 31,
+      "winner": "lag",
+      "pot": 250,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 292,
+        "tag": 210,
+        "lag": 1082,
+        "maniac": 292,
+        "nit": 292,
+        "best_choice": 3832
+      }
+    },
+    {
+      "game_number": 32,
+      "winner": "best_choice",
+      "pot": 250,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 210,
+        "tag": 42,
+        "lag": 1082,
+        "maniac": 292,
+        "nit": 292,
+        "best_choice": 4082
+      }
+    },
+    {
+      "game_number": 33,
+      "winner": "best_choice",
+      "pot": 250,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 42,
+        "tag": 42,
+        "lag": 1082,
+        "maniac": 292,
+        "nit": 210,
+        "best_choice": 4332
+      }
+    },
+    {
+      "game_number": 34,
+      "winner": "best_choice",
+      "pot": 250,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 42,
+        "tag": 42,
+        "lag": 1082,
+        "maniac": 210,
+        "nit": 42,
+        "best_choice": 4582
+      }
+    },
+    {
+      "game_number": 35,
+      "winner": "best_choice",
+      "pot": 250,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 42,
+        "tag": 42,
+        "lag": 1000,
+        "maniac": 42,
+        "nit": 42,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 36,
+      "winner": "lag",
+      "pot": 210,
+      "board": [
+        [
+          "H",
+          "6"
+        ],
+        [
+          "S",
+          "4"
+        ],
+        [
+          "C",
+          "8"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "C",
+          "2"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 42,
+        "tag": 0,
+        "lag": 1042,
+        "maniac": 42,
+        "nit": 42,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 37,
+      "winner": [
+        "calling_station",
+        "lag"
+      ],
+      "pot": 210,
+      "board": [
+        [
+          "D",
+          "A"
+        ],
+        [
+          "C",
+          "6"
+        ],
+        [
+          "H",
+          "8"
+        ],
+        [
+          "S",
+          "J"
+        ],
+        [
+          "C",
+          "8"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 105,
+        "tag": 0,
+        "lag": 979,
+        "maniac": 42,
+        "nit": 42,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 38,
+      "winner": [
+        "calling_station",
+        "nit"
+      ],
+      "pot": 147,
+      "board": [
+        [
+          "C",
+          "2"
+        ],
+        [
+          "S",
+          "2"
+        ],
+        [
+          "S",
+          "Q"
+        ],
+        [
+          "D",
+          "7"
+        ],
+        [
+          "C",
+          "3"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 74,
+        "tag": 0,
+        "lag": 979,
+        "maniac": 42,
+        "nit": 73,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 39,
+      "winner": "nit",
+      "pot": 115,
+      "board": [
+        [
+          "H",
+          "6"
+        ],
+        [
+          "S",
+          "J"
+        ],
+        [
+          "D",
+          "K"
+        ],
+        [
+          "D",
+          "2"
+        ],
+        [
+          "H",
+          "3"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 74,
+        "tag": 0,
+        "lag": 979,
+        "maniac": 0,
+        "nit": 115,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 40,
+      "winner": "lag",
+      "pot": 250,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 74,
+        "tag": 0,
+        "lag": 979,
+        "maniac": 0,
+        "nit": 115,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 41,
+      "winner": [
+        "calling_station",
+        "lag"
+      ],
+      "pot": 326,
+      "board": [
+        [
+          "H",
+          "K"
+        ],
+        [
+          "D",
+          "8"
+        ],
+        [
+          "C",
+          "6"
+        ],
+        [
+          "D",
+          "J"
+        ],
+        [
+          "C",
+          "Q"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 163,
+        "tag": 0,
+        "lag": 890,
+        "maniac": 0,
+        "nit": 115,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 42,
+      "winner": "lag",
+      "pot": 375,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 40,
+        "tag": 0,
+        "lag": 1013,
+        "maniac": 0,
+        "nit": 115,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 43,
+      "winner": [
+        "calling_station",
+        "nit"
+      ],
+      "pot": 155,
+      "board": [
+        [
+          "H",
+          "2"
+        ],
+        [
+          "C",
+          "5"
+        ],
+        [
+          "C",
+          "3"
+        ],
+        [
+          "S",
+          "A"
+        ],
+        [
+          "H",
+          "3"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 78,
+        "tag": 0,
+        "lag": 1013,
+        "maniac": 0,
+        "nit": 77,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 44,
+      "winner": "calling_station",
+      "pot": 155,
+      "board": [
+        [
+          "C",
+          "Q"
+        ],
+        [
+          "D",
+          "2"
+        ],
+        [
+          "D",
+          "9"
+        ],
+        [
+          "D",
+          "A"
+        ],
+        [
+          "D",
+          "T"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 155,
+        "tag": 0,
+        "lag": 1013,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 45,
+      "winner": "lag",
+      "pot": 375,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 155,
+        "tag": 0,
+        "lag": 1013,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 46,
+      "winner": "lag",
+      "pot": 375,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 32,
+        "tag": 0,
+        "lag": 1136,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 47,
+      "winner": "lag",
+      "pot": 284,
+      "board": [
+        [
+          "C",
+          "K"
+        ],
+        [
+          "S",
+          "3"
+        ],
+        [
+          "H",
+          "6"
+        ],
+        [
+          "S",
+          "K"
+        ],
+        [
+          "C",
+          "9"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 1168,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 4832
+      }
+    },
+    {
+      "game_number": 48,
+      "winner": "best_choice",
+      "pot": 375,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 1045,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 4955
+      }
+    },
+    {
+      "game_number": 49,
+      "winner": "best_choice",
+      "pot": 375,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 922,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5078
+      }
+    },
+    {
+      "game_number": 50,
+      "winner": "best_choice",
+      "pot": 375,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 799,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5201
+      }
+    },
+    {
+      "game_number": 51,
+      "winner": "lag",
+      "pot": 562,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 799,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5201
+      }
+    },
+    {
+      "game_number": 52,
+      "winner": "best_choice",
+      "pot": 562,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 799,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5201
+      }
+    },
+    {
+      "game_number": 53,
+      "winner": "best_choice",
+      "pot": 562,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 615,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5385
+      }
+    },
+    {
+      "game_number": 54,
+      "winner": "best_choice",
+      "pot": 562,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 431,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5569
+      }
+    },
+    {
+      "game_number": 55,
+      "winner": "best_choice",
+      "pot": 562,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 247,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5753
+      }
+    },
+    {
+      "game_number": 56,
+      "winner": "lag",
+      "pot": 247,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 247,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5753
+      }
+    },
+    {
+      "game_number": 57,
+      "winner": "best_choice",
+      "pot": 562,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 247,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5753
+      }
+    },
+    {
+      "game_number": 58,
+      "winner": "best_choice",
+      "pot": 562,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 63,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5937
+      }
+    },
+    {
+      "game_number": 59,
+      "winner": [
+        "lag",
+        "best_choice"
+      ],
+      "pot": 441,
+      "board": [
+        [
+          "C",
+          "9"
+        ],
+        [
+          "H",
+          "3"
+        ],
+        [
+          "C",
+          "K"
+        ],
+        [
+          "D",
+          "4"
+        ],
+        [
+          "S",
+          "3"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 221,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5779
+      }
+    },
+    {
+      "game_number": 60,
+      "winner": "best_choice",
+      "pot": 562,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 37,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5963
+      }
+    },
+    {
+      "game_number": 61,
+      "winner": "lag",
+      "pot": 37,
+      "board": [
+        [
+          "H",
+          "J"
+        ],
+        [
+          "D",
+          "4"
+        ],
+        [
+          "D",
+          "9"
+        ],
+        [
+          "S",
+          "8"
+        ],
+        [
+          "C",
+          "4"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 37,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5963
+      }
+    },
+    {
+      "game_number": 62,
+      "winner": "best_choice",
+      "pot": 843,
+      "board": [],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 37,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 5963
+      }
+    },
+    {
+      "game_number": 63,
+      "winner": "best_choice",
+      "pot": 604,
+      "board": [
+        [
+          "D",
+          "8"
+        ],
+        [
+          "C",
+          "T"
+        ],
+        [
+          "H",
+          "6"
+        ],
+        [
+          "D",
+          "J"
+        ],
+        [
+          "S",
+          "T"
+        ]
+      ],
+      "final_stacks": {
+        "calling_station": 0,
+        "tag": 0,
+        "lag": 0,
+        "maniac": 0,
+        "nit": 0,
+        "best_choice": 6000
+      }
+    }
+  ]
+}

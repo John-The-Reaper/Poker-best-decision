@@ -1,4 +1,5 @@
 import numpy as np
+import Game from ../Game.py
 
 class Lag():
     def __init__(self, stack): 
@@ -17,28 +18,8 @@ class Lag():
         return round(result,2) #renvoie 2 chiffres après la virgule
 
     
-def action(self, amount_to_call, position, optimal_choice, optimal_bet_amount):
-    
-    # --- PHASE 1: Normalisation des Entrées (Utiliser une approche sécurisée) ---
-    
-    # S'assurer que les montants sont des nombres (float/int) et non des séquences
-    def get_numerical_value(val):
-        if isinstance(val, (list, tuple)):
-            # Tenter de prendre le premier élément de la séquence
-            return float(val[0]) if val else 0.0
-        try:
-            # Sinon, convertir directement le type en float
-            return float(val)
-        except (TypeError, ValueError):
-            # En cas d'échec de conversion (ex: None, 'erreur'), retourner 0.0
-            return 0.0
-
-    optimal_bet_amount = get_numerical_value(optimal_bet_amount)
-    amount_to_call = get_numerical_value(amount_to_call)
-
-    # Conversion en entiers pour la logique du jeu
-    optimal_bet_amount_int = int(round(optimal_bet_amount))
-    amount_to_call_int = int(round(amount_to_call))
+    def action(self, amount_to_call, position, optimal_choice, optimal_bet_amount, win_chance):
+        style_factor = self.multiplicator(win_chance) 
         #Avantage position impactant style_factor :
         if position == "button":
             style_factor *= 1.15  # Très agressif en position (+ 15%)
@@ -52,12 +33,11 @@ def action(self, amount_to_call, position, optimal_choice, optimal_bet_amount):
             style_factor *= 0.95  # Passif (- 5%)
         else: # "big_blind" (neutre)
             style_factor *= 1.00
-
-        desired_bet_amount = optimal_bet_amount_int * style_factor
-        desired_bet_amount_int = int(round(desired_bet_amount))
-
-        if desired_bet_amount_int > self.stack: #le joueur ne parie pas ce qu'il n'a pas
-            desired_bet_amount_int = self.stack
+        
+        desired_bet_amount = optimal_bet_amount * style_factor
+        
+        if desired_bet_amount > self.stack: #le joueur ne parie pas ce qu'il n'a pas
+            desired_bet_amount = self.stack
 
         if amount_to_call == 0 and optimal_choice == "check":
             return {"check": True}

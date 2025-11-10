@@ -5,8 +5,8 @@ class Maniac():
         self.stack = stack
         self.win_chance = 0.6
 
-        self.min_bet = 1.20
-        self.max_bet = 2.00
+        self.multiplicator_min = 1.20
+        self.multiplicator_max = 2.00
         self.behavior_level = 0.10
         self.aggressiveness = 5.0
 

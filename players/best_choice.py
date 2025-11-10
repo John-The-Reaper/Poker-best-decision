@@ -5,7 +5,7 @@ class best_choice():
         self.stack = stack
         self.win_chance = 0.6
     
-    def action(self, amount_to_call, position, optimal_choice, optimal_bet_amount):
+    def action(self, amount_to_call, position, optimal_choice, optimal_bet_amount, win_chance):
         
         if optimal_choice == "check":
             return {"check": True}

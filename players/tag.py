@@ -17,8 +17,8 @@ class Tag():
         return round(result,2) #renvoie 2 chiffres après la virgule
 
     
-    def action(self, amount_to_call, position, optimal_choice, optimal_bet_amount):
-        style_factor = self.multiplicator(self.win_chance) 
+    def action(self, amount_to_call, position, optimal_choice, optimal_bet_amount, win_chance):
+        style_factor = self.multiplicator(win_chance) 
         #Avantage position impactant style_factor :
         if position == "button":
             style_factor *= 1.15  # Très agressif en position (+ 15%)

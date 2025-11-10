@@ -6,8 +6,8 @@ class Tag():
         self.win_chance = 0.6
 
         #Parameters
-        self.min_bet = 0.10
-        self.max_bet = 0.90
+        self.multiplicator_min = 0.10
+        self.multiplicator_max = 0.90
         self.behavior_level = 0.55
         self.aggressiveness = 12.0
 

@@ -6,8 +6,8 @@ class Nit():
         self.win_chance = 0.6
 
         #Parameters
-        self.min_bet = 0.01
-        self.max_bet = 0.60
+        self.multiplicator_min = 0.01
+        self.multiplicator_max = 0.60
         self.behavior_level = 0.75
         self.aggressiveness = 5.0
 

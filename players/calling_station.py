@@ -17,7 +17,7 @@ class Calling_station():
         result = self.min_bet + (self.max_bet - self.min_bet) / (1 + np.exp(exponent_input))
         return round(result,2) #renvoie 2 chiffres après la virgule
     
-    def action(self, amount_to_call, position, optimal_choice, optimal_bet_amount):
+    def action(self, amount_to_call, position, optimal_choice, optimal_bet_amount, win_chance):
         if position == "utg":
              position = 1.15
         elif position == "hijack":

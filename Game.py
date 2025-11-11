@@ -6,7 +6,7 @@ from players.nit import Nit
 from players.best_choice import best_choice
 from Stats import Stat
 from deal import Deal
-from collections import Counter
+from utils import hand_rank
 import json
 
 class Game:
@@ -112,7 +112,7 @@ class Game:
                     pot=pot,
                     amount_to_call=amount_to_call
                 )
-                action = self._get_player_action(player, amount_to_call, optimal_bet, optimal_choice)
+                action = self._get_player_action(player, amount_to_call, optimal_bet, optimal_choice, equity)
 
                 # 🩵 FIX : on récupère le montant sans re-retirer du stack (les joueurs l'ont déjà fait)
                 if 'fold' in action:
@@ -158,10 +158,10 @@ class Game:
         }
         return position_names.get(position, position)
 
-    def _get_player_action(self, player, amount_to_call, optimal_bet, optimal_choice):
+    def _get_player_action(self, player, amount_to_call, optimal_bet, optimal_choice, equity):
         try:
             position_name = self._get_position_name(player.position)
-            result = player.action(amount_to_call, position_name, optimal_bet, optimal_choice)
+            result = player.action(amount_to_call, position_name, optimal_bet, optimal_choice, equity)
             print(result)
             if isinstance(result, str):
                 return {result: True}
@@ -193,7 +193,7 @@ class Game:
         winners = []
         
         for player in active_players:
-            rank, _ = self.hand_rank(player.hand, board)
+            rank, _ = hand_rank(player.hand, board)
             if rank > best_rank:
                 best_rank = rank
                 winners = [player]
@@ -301,7 +301,7 @@ class Game:
         else:
             print("✅ Tous les jetons sont conservés")
         
-        self._print_ranking()
+        #self._print_ranking()
         
         return stats
 
@@ -327,21 +327,6 @@ class Game:
             }
         
         return stats
-
-    def _print_ranking(self):
-        """
-        Affiche le classement
-        """
-        ranking = sorted(
-            zip(self.player_names, self.players),
-            key=lambda x: x[1].stack,
-            reverse=True
-        )
-        
-        print("\nClassement:")
-        for rank, (name, player) in enumerate(ranking, 1):
-            profit = player.stack - self.initial_stack
-            print(f"  {rank}. {name:20s}: {player.stack:2f} jetons ({profit:+.2f})")
 
     def save_json(self, data: dict, path: str):
         """
@@ -369,71 +354,3 @@ class Game:
 
         stat = Stat(hand=player_hand, board=board, pot=pot, amount_to_call=amount_to_call)
         return stat.win_chance_and_choice()
-
-    def hand_rank(self, hand, board):
-        """
-        Retourne la meilleure combinaison possible avec hand + board en lui attribuant une valeur numérique (1-9)
-        """
-       
-        cards = hand + board
-        if len(cards) < 5: # Comme la fonction est utilisée à la fin
-            return (1, cards)
-
-        value_map = {v: i+2 for i, v in enumerate(self.values)}
-        suits = [card[0] for card in cards]
-        values = [card[1] for card in cards]
-        num_values = [value_map[v] for v in values]
-        num_values.sort(reverse=True)
-
-        value_counts = Counter(values)
-        suit_counts = Counter(suits)
-
-        # Straight Flush (9)
-        if max(suit_counts.values()) >= 5:
-            for suit in suit_counts:
-                if suit_counts[suit] >= 5:
-                    suit_num_values = sorted([value_map[card[1]] for card in cards if card[0] == suit], reverse=True)
-                    for i in range(len(suit_num_values) - 4):
-                        if suit_num_values[i] - suit_num_values[i + 4] == 4 and len(set(suit_num_values[i:i+5])) == 5:
-                            high_card = self.values[suit_num_values[i] - 2]
-                            return (9, f"Straight Flush, {high_card} high")
-                    if set([14, 5, 4, 3, 2]).issubset(set(suit_num_values)):
-                        return (9, "Wheel Straight Flush (A-5)")
-
-        # Four of a kind (8)
-        for value, count in value_counts.items():
-            if count == 4:
-                return (8, f"Four of a kind {value}")
-
-        # Full House (7)
-        if 3 in value_counts.values() and 2 in value_counts.values():
-            return (7, "Full House")
-
-        # Flush (6)
-        if max(suit_counts.values()) >= 5:
-            return (6, "Flush")
-
-        # Straight (5)
-        unique_values = sorted(set(num_values), reverse=True)
-        for i in range(len(unique_values) - 4):
-            if unique_values[i] - unique_values[i + 4] == 4 and len(set(unique_values[i:i+5])) == 5:
-                return (5, "Straight")
-        if set([14, 5, 4, 3, 2]).issubset(set(num_values)):
-            return (5, "Wheel Straight (A-5)")
-
-        # Three of a kind (4)
-        if 3 in value_counts.values():
-            return (4, "Three of a kind")
-
-        # Two Pair (3)
-        if len([k for k, v in value_counts.items() if v == 2]) >= 2:
-            return (3, "Two pair")
-
-        # One Pair (2)
-        if 2 in value_counts.values():
-            return (2, "One pair")
-
-        # High card (1)
-        return (1, "High card")
-
-

@@ -237,7 +237,7 @@ class Stat:
         """
         pass
 
-    def win_chance_and_choice(self, num_simulations=100000):
+    def win_chance_and_choice(self, num_simulations=10000):
         """
         Calcule l'équité et détermine l'action optimale (fold/call/bet/raise) avec le sizing optimal.
         arg: num_simulations --> Nombre de simulations Monte Carlo (par défaut 100000 pour précision).

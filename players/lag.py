@@ -1,5 +1,4 @@
 import numpy as np
-import Game from ../Game.py
 
 class Lag():
     def __init__(self, stack): 

@@ -39,15 +39,6 @@ class Stat:
         """with open("preflop_equity.json", "r") as f:
             self.initial_equity = json.load(f)"""
         
-    def opp_hand_guess(self):
-        """
-        Estime la main du joueur adverse en fonction de ses moove et adapte la range en conséquence.
-        Elle permet de réduire le opp_hand de chaques joueurs petit à petit
-        return un  dictionnaire avec les mains probables et leurs fréquences.
-        """
-        pass
-
-    # -- Méthodes de calcul statistique -- #
 
     def pot_odds(self):
         """

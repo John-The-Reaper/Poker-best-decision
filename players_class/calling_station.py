@@ -1,0 +1,104 @@
+try:
+    import numpy as np
+except Exception:
+    # Si numpy n'est pas installé dans l'environnement de test,
+    # fallback léger sur random pour que la logique reste testable.
+    import random as _random
+
+    class _Random:
+        @staticmethod
+        def rand():
+            return _random.random()
+
+    class _NpFallback:
+        random = _Random()
+
+    np = _NpFallback()
+
+
+class Calling_station():
+    """Un joueur qui aime caller.
+
+    Comportement amélioré :
+    - respecte un seuil minimal d'équité pour appeler
+    - ne paie pas plus qu'un pourcentage du stack, sauf pour all-in où il exige une équité élevée
+    - check si `amount_to_call == 0`
+    - accepte de caller de petits montants automatiquement
+    - inclut une petite probabilité aléatoire d'appel même si l'équité est légèrement insuffisante,
+      pour simuler un joueur passif qui suit souvent.
+    Les clés d'action sont en minuscules pour rester cohérent avec les autres classes de joueurs.
+    """
+
+    def __init__(self, stack,
+                 min_equity_to_call: float = 0.25,  # AUGMENTÉ de 0.20
+                 max_stack_percent_to_call: float = 0.30,  # RÉDUIT de 0.40
+                 small_call_threshold_percent: float = 0.02,
+                 random_call_prob: float = 0.08,  # RÉDUIT de 0.12
+                 all_in_min_equity: float = 0.70):  # AUGMENTÉ de 0.65
+        self.stack = float(stack)
+
+        # Seuils et paramètres (paramétrisables)
+        self.min_equity_to_call = float(min_equity_to_call)
+        self.max_stack_percent_to_call = float(max_stack_percent_to_call)
+        self.small_call_threshold_percent = float(small_call_threshold_percent)
+        self.random_call_prob = float(random_call_prob)
+        self.all_in_min_equity = float(all_in_min_equity)
+
+    def action(self, amount_to_call, position=None, optimal_choice=None, optimal_bet_amount=None, win_chance=None):
+        """Décide d'appeler, se coucher ou checker.
+
+        Args:
+            amount_to_call: montant requis pour rester dans le coup (>= 0)
+            position, optimal_choice, optimal_bet_amount: paramètres présents pour compatibilité (optionnels)
+            win_chance: probabilité (0..1) de gagner
+
+        Returns:
+            dict: une action parmi {"check": True}, {"call": amount}, {"fold": True}
+        """
+
+        # Normalisations et validations
+        try:
+            amount = float(amount_to_call)
+        except Exception:
+            amount = 0.0
+
+        if win_chance is None:
+            win = 0.0
+        else:
+            try:
+                win = float(win_chance)
+            except Exception:
+                win = 0.0
+
+        # bord cases
+        if self.stack <= 0:
+            return {"fold": True}
+
+        if amount <= 0:
+            return {"check": True}
+
+        # petit call automatique : si l'effort est négligeable par rapport au stack
+        if amount <= self.small_call_threshold_percent * self.stack:
+            return {"call": amount}
+
+        # Si l'appel exige tout (all-in adverse / on doit mettre >= stack)
+        if amount >= self.stack:
+            # n'appelle all-in que si équité très forte
+            if win >= self.all_in_min_equity:
+                return {"call": self.stack}
+            else:
+                return {"fold": True}
+
+        # Pour les appels normaux, vérifier le pourcentage du stack
+        percent = amount / self.stack
+
+        # Si c'est raisonnable et l'équité est suffisante -> call
+        if percent <= self.max_stack_percent_to_call and win >= self.min_equity_to_call:
+            return {"call": amount}
+
+        # Parfois, même s'il est légèrement en-dessous, il peut quand même caller (comportement de calling station)
+        # Utilise numpy pour la RNG déjà présente dans le projet
+        if win >= (self.min_equity_to_call * 0.7) and np.random.rand() < self.random_call_prob:
+            return {"call": amount}
+
+        return {"fold": True}

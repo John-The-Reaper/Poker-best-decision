@@ -5,7 +5,7 @@ from utils import hand_rank
 from collections import Counter
 
 class Stat:
-    def __init__(self, hand, board, pot, amount_to_call, players=None, main_character=None, stage=0, position_main_character=None, opponent_stats=None):
+    def __init__(self, hand, board, pot, amount_to_call, players=None, main_character=None, stage=0, position_main_character=None):
         """
         Récupère les données pour les calculs statistiques du poker sur les class Deal, Player, Game.
         arg: hand --> Main du joueur principal (ex. [('H', 'A'), ('D', 'K')]).
@@ -25,7 +25,6 @@ class Stat:
         self.players = players if players is not None else [] 
         self.main_character = main_character
         self.stage = stage
-        self.opponent_stats = opponent_stats
         self.position_main_character = position_main_character
         
         # Initialisation de opp_hand avec toutes les cartes possibles pour l'adversaire

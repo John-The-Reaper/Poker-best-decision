@@ -1,16 +1,16 @@
 from players_class.calling_station import Calling_station
 from players_class.tag import Tag
-# Importation de Lag (assumons qu'il existe)
-from players_class.maniac import Maniac 
+from players_class.lag import Lag
+from players_class.maniac import Maniac
 from players_class.nit import Nit
 from players_class.best_choice import best_choice
 from stats import Stat
 from deal import Deal
-from collections import Counter
+from utils import hand_rank
 import json
 
 class Game:
-    def __init__(self, big_blind=50, small_blind=25, stack=10000):
+    def __init__(self, big_blind=50, small_blind=25, stack=1000):
         self.big_blind = big_blind
         self.small_blind = small_blind  
         self.initial_stack = stack
@@ -21,13 +21,10 @@ class Game:
 
         self.calling_station = Calling_station(stack=stack)
         self.tag = Tag(stack=stack)
-        # self.lag = Lag(stack=stack) # Retiré car non fourni dans les classes des joueurs
+        self.lag = Lag(stack=stack)
         self.maniac = Maniac(stack=stack)
         self.nit = Nit(stack=stack)
         self.best_choice = best_choice(stack=stack)
-        
-        # J'ajoute un joueur pour compenser le Lag manquant dans l'exemple de position (pour avoir 6 joueurs)
-        self.lag = best_choice(stack=stack)
 
         self.calling_station.position = 0
         self.tag.position = 1
@@ -54,19 +51,18 @@ class Game:
         board = []
         current_bets = {id(p): 0 for p in active_players}
          
-        # Logique des blindes
         sb_player = next((p for p in active_players if p.position == 1), active_players[0])
         bb_player = next((p for p in active_players if p.position == 2), (active_players[1] if len(active_players) > 1 else active_players[0]))
         
-        sb_amount = min(self.small_blind, sb_player.stack)
-        sb_player.stack -= sb_amount
+        sb_amount = int(min(self.small_blind, sb_player.stack))
+        sb_player.stack = int(sb_player.stack - sb_amount)
         current_bets[id(sb_player)] = sb_amount
-        pot += sb_amount
+        pot = int(pot + sb_amount)
         
-        bb_amount = min(self.big_blind, bb_player.stack)
-        bb_player.stack -= bb_amount
+        bb_amount = int(min(self.big_blind, bb_player.stack))
+        bb_player.stack = int(bb_player.stack - bb_amount)
         current_bets[id(bb_player)] = bb_amount
-        pot += bb_amount
+        pot = int(pot + bb_amount)
         
         # PREFLOP
         pot, active_players, current_bets = self._betting_round(active_players, pot, current_bets, board, 0)
@@ -97,6 +93,10 @@ class Game:
         return self._showdown(active_players, pot, board)
 
     def _betting_round(self, active_players, pot, current_bets, board, state):
+        """
+        Gère un tour de mise complet
+        ✅ CORRECTION FINALE : Distinction claire entre BET et RAISE
+        """
         max_rounds = 10
         round_count = 0
         
@@ -109,73 +109,76 @@ class Game:
                 if player.stack == 0:
                     continue
                 
+                # Montant que le joueur doit ajouter pour égaliser
                 amount_to_call = current_bet - current_bets[id(player)]
                 
-                # S'assurer que le joueur n'est pas déjà all-in au bet max
-                if player.stack + current_bets[id(player)] == current_bet and amount_to_call > 0:
-                    continue
-
-                equity, optimal_action, optimal_bet_amount = self.get_stats(
+                # Obtenir les statistiques
+                equity, optimal_bet, optimal_choice = self.get_stats(
                     player_hand=player.hand,
                     board=board,
                     pot=pot,
                     amount_to_call=amount_to_call
                 )
-                print(f"Pot: {pot}, Call: {amount_to_call}, Optimal: {optimal_action}/{optimal_bet_amount}")
                 
-                action_dict = self._get_player_action(player, amount_to_call, optimal_bet_amount, optimal_action, equity)
-                
-                action_type = list(action_dict.keys())[0]
-                action_value = action_dict[action_type]
+                # Obtenir l'action du joueur
+                action = self._get_player_action(player, amount_to_call, optimal_choice, optimal_bet, equity)
+                print(action)
 
-                if action_type == 'fold':
+                # Traiter l'action
+                if 'fold' in action:
                     active_players.remove(player)
                     someone_acted = True
                     if len(active_players) == 1:
                         return pot, active_players, current_bets
 
-                elif action_type == 'check':
+                elif 'check' in action:
                     if amount_to_call == 0:
                         someone_acted = True
                     else:
+                        # Check impossible quand il faut call
                         active_players.remove(player)
-                        someone_acted = True
 
-                elif action_type == 'call':
-                    total_to_add = min(amount_to_call, player.stack)
-                    player.stack -= total_to_add
-                    pot += total_to_add
-                    current_bets[id(player)] += total_to_add
+                elif 'call' in action:
+                    call_amount = int(min(action.get('call', amount_to_call), player.stack))
+                    
+                    # Retirer du stack ET ajouter au pot
+                    player.stack = int(player.stack - call_amount)
+                    pot = int(pot + call_amount)
+                    current_bets[id(player)] = int(current_bets[id(player)] + call_amount)
                     someone_acted = True
 
-                elif action_type in ('bet', 'raise'):
-                    bet_amount = action_value # C'est le montant TOTAL de la mise/relance désirée
+                elif 'bet' in action:
+                    # BET = premier à miser ce tour (amount_to_call devrait être 0)
+                    bet_amount = int(action.get('bet', 0))
+                    bet_amount = int(min(bet_amount, player.stack))
                     
-                    if amount_to_call == 0:
-                        # Pour un BET, on ajoute le montant total du bet
-                        total_to_add = min(bet_amount, player.stack)
-                    else:
-                        # Pour un RAISE, on ajoute la différence entre la mise totale désirée et ce qu'il a déjà mis
-                        total_to_add = min(bet_amount - current_bets[id(player)], player.stack)
-                        
-                    # Mettre à jour les jetons et le pot
-                    player.stack -= total_to_add
-                    pot += total_to_add
-                    current_bets[id(player)] += total_to_add
-                        
-                    current_bet = max(current_bet, current_bets[id(player)])
+                    # Retirer du stack ET ajouter au pot
+                    player.stack = int(player.stack - bet_amount)
+                    pot = int(pot + bet_amount)
+                    current_bets[id(player)] = int(current_bets[id(player)] + bet_amount)
+                    someone_acted = True
+                
+                elif 'raise' in action:
+                    # RAISE = égaliser + montant additionnel
+                    raise_amount = int(action.get('raise', 0))
+                    total_to_add = int(amount_to_call + raise_amount)
+                    total_to_add = int(min(total_to_add, player.stack))
+                    
+                    # Retirer du stack ET ajouter au pot
+                    player.stack = int(player.stack - total_to_add)
+                    pot = int(pot + total_to_add)
+                    current_bets[id(player)] = int(current_bets[id(player)] + total_to_add)
                     someone_acted = True
             
+            # Vérifier si tout le monde a misé la même chose
             bets_list = [current_bets[id(p)] for p in active_players if p.stack > 0]
-            if bets_list and all(bet == current_bet for bet in bets_list) and someone_acted:
+            
+            if bets_list and len(set(bets_list)) <= 1 and someone_acted:
                 break
         
         return pot, active_players, current_bets
 
     def _get_position_name(self, position):
-        """
-        [FIX] Méthode manquante qui cause l'erreur 'has no attribute'
-        """
         position_names = {
             0: "button",
             1: "small_blind",
@@ -186,17 +189,18 @@ class Game:
         }
         return position_names.get(position, position)
 
-    def _get_player_action(self, player, amount_to_call, optimal_bet, optimal_choice, equity):
+    def _get_player_action(self, player, amount_to_call, optimal_choice, optimal_bet, equity):
+        """
+        Récupère l'action d'un joueur
+        """
         try:
             position_name = self._get_position_name(player.position)
-            # [CORRECTION] Inverser optimal_choice et optimal_bet pour correspondre à la signature du bot
-            result = player.action(amount_to_call, position_name, optimal_choice, optimal_bet, equity) 
-            print(result)
+            result = player.action(amount_to_call, position_name, optimal_choice, optimal_bet, equity)
+            
             if isinstance(result, str):
                 return {result: True}
             return result
         except Exception as e:
-            print(f"Erreur action joueur pos={player.position}: {e}")
             return {'fold': True}
 
     def _award_pot(self, winner, pot, board):
@@ -214,7 +218,6 @@ class Game:
         self.game_history.append(game_data)
         return game_data
 
-    # ... (le reste de la classe, y compris _showdown, simulation, etc., est inchangé)
     def _showdown(self, active_players, pot, board):
         if board is None:
             board = []
@@ -223,7 +226,7 @@ class Game:
         winners = []
         
         for player in active_players:
-            rank, _ = self.hand_rank(player.hand, board)
+            rank, _ = hand_rank(player.hand, board)
             if rank > best_rank:
                 best_rank = rank
                 winners = [player]
@@ -252,55 +255,29 @@ class Game:
     def simulation(self, save_path: str = None):
         """
         Génère une simulation jusqu'à ce qu'un seul joueur ait tous les jetons
-        
-        Args:
-            save_path: Chemin pour sauvegarder les stats (optionnel)
-        
-        Note: La simulation continue jusqu'à ce qu'un seul joueur reste.
         """
-        print(f"=== Simulation jusqu'à élimination complète ===")
-        
-        # Vérifier les jetons au départ
         total_start = sum(p.stack for p in self.players)
-        print(f"Jetons au départ: {total_start}")
-        print(f"Joueurs actifs: {len([p for p in self.players if p.stack > 0])}")
         
         game_num = 0
-        while True:  # Boucle infinie jusqu'à élimination
+        while True:
             self.game_count = game_num + 1
             
-            # Vérifier combien de joueurs ont encore des jetons
             active_count = sum(1 for p in self.players if p.stack > 0)
             
-            # Si un seul joueur reste, la simulation est terminée
             if active_count <= 1:
-                print(f"🏆 Simulation terminée après {game_num} parties!")
                 winner = next((p for p in self.players if p.stack > 0), None)
                 if winner:
                     winner_name = self.player_names[self.players.index(winner)]
-                    print(f"🏆 GAGNANT: {winner_name} avec {winner.stack} jetons!")
                 break
             
             # Augmenter les blinds tous les 10 parties
             if game_num > 0 and game_num % 10 == 0:
                 self.big_blind = int(self.big_blind * 1.5)
                 self.small_blind = int(self.small_blind * 1.5)
-                print(f"Blindes augmentées: SB={self.small_blind}, BB={self.big_blind}")
-            
-            # Affichage de progression
-            if (game_num + 1) % 10 == 0:
-                remaining = sum(1 for p in self.players if p.stack > 0)
-                print(f"Parties jouées: {game_num + 1} | Joueurs restants: {remaining}")
-                
-                # Vérifier conservation des jetons
-                total_current = sum(p.stack for p in self.players)
-                if total_current != total_start:
-                    print(f"⚠️  ATTENTION: Jetons={total_current} (devrait être {total_start})")
             
             # Jouer une partie
             game_data = self.game()
             if game_data is None:
-                print("Simulation terminée (pas assez de joueurs)")
                 break
             
             # Rotation des positions
@@ -309,29 +286,12 @@ class Game:
             
             game_num += 1
         
-        
         # Calculer les statistiques
         stats = self._calculate_stats()
         
         # Sauvegarder
         if save_path:
             self.save_json(stats, save_path)
-            print(f"Données sauvegardées: {save_path}")
-        
-        # Afficher les résultats
-        print("=== Résultats ===")
-        print(f"Parties jouées: {len(self.game_history)}")
-        
-        # Vérifier conservation des jetons
-        total_end = sum(p.stack for p in self.players)
-        print(f"Jetons au départ: {total_start}")
-        print(f"Jetons à la fin: {total_end}")
-        if total_end != total_start:
-            print(f"⚠️  PERTE DE {total_start - total_end} JETONS!")
-        else:
-            print("✅ Tous les jetons sont conservés")
-        
-        self._print_ranking()
         
         return stats
 
@@ -358,21 +318,6 @@ class Game:
         
         return stats
 
-    def _print_ranking(self):
-        """
-        Affiche le classement
-        """
-        ranking = sorted(
-            zip(self.player_names, self.players),
-            key=lambda x: x[1].stack,
-            reverse=True
-        )
-        
-        print("\nClassement:")
-        for rank, (name, player) in enumerate(ranking, 1):
-            profit = player.stack - self.initial_stack
-            print(f"  {rank}. {name:20s}: {player.stack:2f} jetons ({profit:+.2f})")
-
     def save_json(self, data: dict, path: str):
         """
         Sauvegarde dans un fichier JSON
@@ -383,85 +328,9 @@ class Game:
     def get_stats(self, player_hand, board, pot, amount_to_call):
         """
         Crée un objet Stat pour un joueur
-        
-        Args:
-            player_hand: Main du joueur
-            board: Board actuel (peut être None ou vide)
-            pot: Taille du pot
-            amount_to_call: Montant à payer
-            
-        Returns:
-            Stat: Objet Stat initialisé
         """
-        # Assurer que board n'est pas None
         if board is None:
             board = []
 
         stat = Stat(hand=player_hand, board=board, pot=pot, amount_to_call=amount_to_call)
         return stat.win_chance_and_choice()
-
-    def hand_rank(self, hand, board):
-        """
-        Retourne la meilleure combinaison possible avec hand + board en lui attribuant une valeur numérique (1-9)
-        """
-       
-        cards = hand + board
-        if len(cards) < 5: # Comme la fonction est utilisée à la fin
-            return (1, cards)
-
-        value_map = {v: i+2 for i, v in enumerate(self.values)}
-        suits = [card[0] for card in cards]
-        values = [card[1] for card in cards]
-        num_values = [value_map[v] for v in values]
-        num_values.sort(reverse=True)
-
-        value_counts = Counter(values)
-        suit_counts = Counter(suits)
-
-        # Straight Flush (9)
-        if max(suit_counts.values()) >= 5:
-            for suit in suit_counts:
-                if suit_counts[suit] >= 5:
-                    suit_num_values = sorted([value_map[card[1]] for card in cards if card[0] == suit], reverse=True)
-                    for i in range(len(suit_num_values) - 4):
-                        if suit_num_values[i] - suit_num_values[i + 4] == 4 and len(set(suit_num_values[i:i+5])) == 5:
-                            high_card = self.values[suit_num_values[i] - 2]
-                            return (9, f"Straight Flush, {high_card} high")
-                    if set([14, 5, 4, 3, 2]).issubset(set(suit_num_values)):
-                        return (9, "Wheel Straight Flush (A-5)")
-
-        # Four of a kind (8)
-        for value, count in value_counts.items():
-            if count == 4:
-                return (8, f"Four of a kind {value}")
-
-        # Full House (7)
-        if 3 in value_counts.values() and 2 in value_counts.values():
-            return (7, "Full House")
-
-        # Flush (6)
-        if max(suit_counts.values()) >= 5:
-            return (6, "Flush")
-
-        # Straight (5)
-        unique_values = sorted(set(num_values), reverse=True)
-        for i in range(len(unique_values) - 4):
-            if unique_values[i] - unique_values[i + 4] == 4 and len(set(unique_values[i:i+5])) == 5:
-                return (5, "Straight")
-        if set([14, 5, 4, 3, 2]).issubset(set(num_values)):
-            return (5, "Wheel Straight (A-5)")
-
-        # Three of a kind (4)
-        if 3 in value_counts.values():
-            return (4, "Three of a kind")
-
-        # Two Pair (3)
-        if len([k for k, v in value_counts.items() if v == 2]) >= 2:
-            return (3, "Two pair")
-
-        # One Pair (2)
-        if 2 in value_counts.values():
-            return (2, "One pair")
-
-        # High card (1)
-        return (1, "High card")

@@ -37,6 +37,19 @@ class Game:
         self.player_names = ['calling_station', 'tag', 'lag', 'maniac', 'nit', 'best_choice']
 
     def game(self):
+        """
+        Exécute une main complète de poker pour l'instance de jeu.
+        Fonctionnalités :
+        - Initialise la donne et distribue les mains aux joueurs actifs.
+        - Gère la publication des small/big blinds et met à jour les stacks et le pot.
+        - Lance les tours d'enchères successifs : préflop, flop, turn, river.
+        - Met à jour le board et les mises courantes à chaque tour.
+        - Termine la main soit par abandon (un seul joueur restant) soit par abattage (showdown).
+        Effets de bord :
+        - Modifie les attributs des joueurs (hand, stack), le pot et le board.
+        Returns:
+        - Le résultat renvoyé par _award_pot ou _showdown, ou None si moins de deux joueurs actifs.
+        """
         dealer = Deal()
         dealer.cards_init()
         
@@ -95,7 +108,6 @@ class Game:
     def _betting_round(self, active_players, pot, current_bets, board, state):
         """
         Gère un tour de mise complet
-        ✅ CORRECTION FINALE : Distinction claire entre BET et RAISE
         """
         max_rounds = 10
         round_count = 0
@@ -255,6 +267,11 @@ class Game:
     def simulation(self, save_path: str = None):
         """
         Génère une simulation jusqu'à ce qu'un seul joueur ait tous les jetons
+        
+        Args:
+            save_path: Chemin pour sauvegarder les stats (optionnel)
+        
+        Note: La simulation continue jusqu'à ce qu'un seul joueur reste.
         """
         total_start = sum(p.stack for p in self.players)
         
@@ -328,6 +345,15 @@ class Game:
     def get_stats(self, player_hand, board, pot, amount_to_call):
         """
         Crée un objet Stat pour un joueur
+        
+        Args:
+            player_hand: Main du joueur
+            board: Board actuel (peut être None ou vide)
+            pot: Taille du pot
+            amount_to_call: Montant à payer
+            
+        Returns:
+            Stat: Objet Stat initialisé
         """
         if board is None:
             board = []

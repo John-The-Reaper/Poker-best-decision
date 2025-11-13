@@ -471,7 +471,8 @@ if __name__ == "__main__":
     
     # Option 2: Lancer une simulation et visualiser
     print("\nOption 2: Nouvelle simulation")
-    game = Game(stack=1000)
+    game = Game(stack=1000, num_simulations=2500) 
+    # Plus num_simulations est élevé, plus les calculs d'équité sont précis mais plus longs.
     renderer.game = game
     results = game.simulation(save_path="nouvelle_simulation.json")
     renderer.plot_all_from_json("nouvelle_simulation.json")

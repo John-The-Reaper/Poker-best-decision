@@ -10,10 +10,11 @@ from utils import hand_rank
 import json
 
 class Game:
-    def __init__(self, big_blind=50, small_blind=25, stack=1000):
+    def __init__(self, big_blind=50, small_blind=25, stack=1000, num_simulations=2000):
         self.big_blind = big_blind
         self.small_blind = small_blind  
         self.initial_stack = stack
+        self.num_simulations = num_simulations
         self.game_count = 0
         self.game_history = []
 
@@ -359,4 +360,4 @@ class Game:
             board = []
 
         stat = Stat(hand=player_hand, board=board, pot=pot, amount_to_call=amount_to_call)
-        return stat.win_chance_and_choice()
+        return stat.win_chance_and_choice(num_simulations=self.num_simulations)

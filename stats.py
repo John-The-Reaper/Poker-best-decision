@@ -228,7 +228,7 @@ class Stat:
         pass
 
 
-    def win_chance_and_choice(self, num_simulations=1000):
+    def win_chance_and_choice(self, num_simulations=2000):
         # --- Récupération des données ---
         equity = self.get_equity(num_simulations)
         pot_odds = self.pot_odds()

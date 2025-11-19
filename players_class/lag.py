@@ -2,15 +2,6 @@ import numpy as np
 
 
 class Lag():
-    """Joueur Loose-Aggressive (LAG).
-    
-    Comportement :
-    - Joue beaucoup de mains agressivement (loose + aggressive)
-    - Seuil comportemental bas (0.40) : mise même avec équité modérée
-    - Exploite les calling stations avec value bets
-    - Ajuste le jeu selon la position
-    """
-    
     def __init__(self, stack): 
         self.stack = float(stack)
 
@@ -27,18 +18,6 @@ class Lag():
         return float(round(result, 2))
 
     def action(self, amount_to_call, position=None, optimal_choice=None, optimal_bet_amount=None, win_chance=None):
-        """Décide de l'action à prendre.
-        
-        Args:
-            amount_to_call: montant à payer
-            position: position du joueur ("button", "utg", etc.)
-            optimal_choice: recommandation optimale
-            optimal_bet_amount: montant de mise optimal
-            win_chance: probabilité de gagner (0..1)
-            
-        Returns:
-            dict: action à exécuter
-        """
         
         # Validations
         try:

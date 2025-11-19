@@ -5,11 +5,11 @@ class Maniac():
     def __init__(self, stack): 
         self.stack = float(stack)
 
-        # Paramètres de la fonction sigmoïde - RÉDUITS pour mises plus raisonnables
-        self.multiplicator_min = 0.90  # RÉDUIT de 1.20
-        self.multiplicator_max = 1.30  # RÉDUIT de 2.00
-        self.behavior_level = 0.10     # Seuil très bas : ultra loose
-        self.aggressiveness = 5.0      # Pente douce
+        # Paramètres de la fonction sigmoïde
+        self.multiplicator_min = 0.90
+        self.multiplicator_max = 1.30
+        self.behavior_level = 0.10
+        self.aggressiveness = 5.0
 
     def multiplicator(self, win_chance): 
         """Calcule le multiplicateur de mise basé sur win_chance via sigmoïde."""

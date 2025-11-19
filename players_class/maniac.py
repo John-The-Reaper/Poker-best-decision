@@ -2,15 +2,6 @@ import numpy as np
 
 
 class Maniac():
-    """Joueur Maniac (Very Loose-Aggressive).
-    
-    Comportement :
-    - Joue énormément de mains très agressivement (ultra loose + ultra aggressive)
-    - Seuil comportemental très bas (0.10) : mise même avec très peu d'équité
-    - Bluffe beaucoup, overbet fréquent
-    - Fold rarement, préfère l'agression
-    """
-    
     def __init__(self, stack): 
         self.stack = float(stack)
 
@@ -27,19 +18,6 @@ class Maniac():
         return float(round(result, 2))
 
     def action(self, amount_to_call, position=None, optimal_choice=None, optimal_bet_amount=None, win_chance=None):
-        """Décide de l'action à prendre.
-        
-        Args:
-            amount_to_call: montant à payer
-            position: position du joueur ("button", "utg", etc.)
-            optimal_choice: recommandation optimale
-            optimal_bet_amount: montant de mise optimal
-            win_chance: probabilité de gagner (0..1)
-            
-        Returns:
-            dict: action à exécuter
-        """
-        
         # Validations
         try:
             amount = float(amount_to_call) if amount_to_call is not None else 0.0

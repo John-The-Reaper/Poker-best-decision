@@ -14,11 +14,11 @@ class Lag():
     def __init__(self, stack): 
         self.stack = float(stack)
 
-        # Paramètres de la fonction sigmoïde - RÉDUITS pour mises plus raisonnables
-        self.multiplicator_min = 0.70  # RÉDUIT de 0.85
-        self.multiplicator_max = 0.95  # RÉDUIT de 1.10
-        self.behavior_level = 0.40     # Seuil bas : joue loose
-        self.aggressiveness = 15.0     # Pente plus raide
+        # Paramètres de la fonction sigmoïde
+        self.multiplicator_min = 0.70 
+        self.multiplicator_max = 0.95
+        self.behavior_level = 0.40
+        self.aggressiveness = 15.0
 
     def multiplicator(self, win_chance): 
         """Calcule le multiplicateur de mise basé sur win_chance via sigmoïde."""

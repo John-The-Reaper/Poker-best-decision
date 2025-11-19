@@ -15,21 +15,13 @@ except Exception:
 
 
 class Calling_station():
-
-    def __init__(self, stack,
-                 min_equity_to_call: float = 0.25,  # AUGMENTÉ de 0.20
-                 max_stack_percent_to_call: float = 0.30,  # RÉDUIT de 0.40
-                 small_call_threshold_percent: float = 0.02,
-                 random_call_prob: float = 0.08,  # RÉDUIT de 0.12
-                 all_in_min_equity: float = 0.70):  # AUGMENTÉ de 0.65
+    def __init__(self, stack):
         self.stack = float(stack)
-
-        # Seuils et paramètres (paramétrisables)
-        self.min_equity_to_call = float(min_equity_to_call)
-        self.max_stack_percent_to_call = float(max_stack_percent_to_call)
-        self.small_call_threshold_percent = float(small_call_threshold_percent)
-        self.random_call_prob = float(random_call_prob)
-        self.all_in_min_equity = float(all_in_min_equity)
+        self.min_equity_to_call = 0.25
+        self.max_stack_percent_to_call = 0.30
+        self.small_call_threshold_percent = 0.02
+        self.random_call_prob = 0.08
+        self.all_in_min_equity = 0.70
 
     def action(self, amount_to_call, position=None, optimal_choice=None, optimal_bet_amount=None, win_chance=None):
         """Décide d'appeler, se coucher ou checker.

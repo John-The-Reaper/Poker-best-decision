@@ -2,30 +2,10 @@ import numpy as np
 
 
 class best_choice():
-    """Joueur optimal qui suit exactement la recommandation de stats.py.
-    
-    Comportement :
-    - Exécute l'action optimale sans modification de style
-    - Valide les inputs et limite les mises au stack disponible
-    - Gère les cas limites (None, valeurs négatives, etc.)
-    """
-    
     def __init__(self, stack): 
         self.stack = float(stack)
     
     def action(self, amount_to_call, position=None, optimal_choice=None, optimal_bet_amount=None, win_chance=None):
-        """Exécute l'action optimale recommandée.
-        
-        Args:
-            amount_to_call: montant à payer pour rester dans le coup
-            position: position du joueur (optionnel, non utilisé)
-            optimal_choice: action recommandée ("check", "call", "bet", "raise", "fold")
-            optimal_bet_amount: montant recommandé pour bet/raise
-            win_chance: probabilité de gagner (optionnel, non utilisé)
-            
-        Returns:
-            dict: action à exécuter
-        """
         
         # Validations
         try:

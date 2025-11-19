@@ -2,15 +2,6 @@ import numpy as np
 
 
 class Nit():
-    """Joueur Nit (Very Tight).
-    
-    Comportement :
-    - Joue très peu de mains, seulement les meilleures (ultra tight)
-    - Seuil comportemental très élevé (0.75) : mise fort uniquement avec nuts
-    - Mise petite avec mains faibles, overbet massif avec nuts
-    - Fold facilement face à l'agression
-    """
-    
     def __init__(self, stack): 
         self.stack = float(stack)
 
@@ -27,19 +18,6 @@ class Nit():
         return float(round(result, 2))
 
     def action(self, amount_to_call, position=None, optimal_choice=None, optimal_bet_amount=None, win_chance=None):
-        """Décide de l'action à prendre.
-        
-        Args:
-            amount_to_call: montant à payer
-            position: position du joueur ("button", "utg", etc.)
-            optimal_choice: recommandation optimale
-            optimal_bet_amount: montant de mise optimal
-            win_chance: probabilité de gagner (0..1)
-            
-        Returns:
-            dict: action à exécuter
-        """
-        
         # Validations
         try:
             amount = float(amount_to_call) if amount_to_call is not None else 0.0

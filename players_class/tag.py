@@ -2,23 +2,14 @@ import numpy as np
 
 
 class Tag():
-    """Joueur Tight-Aggressive (TAG).
-    
-    Comportement :
-    - Joue peu de mains mais agressivement (tight + aggressive)
-    - Seuil comportemental élevé (0.55) : mise fort quand win_chance > 55%
-    - Exploite les calling stations en value-betting
-    - Ajuste le jeu selon la position
-    """
-    
     def __init__(self, stack): 
         self.stack = float(stack)
 
-        # Paramètres de la fonction sigmoïde - RÉDUITS pour mises plus raisonnables
-        self.multiplicator_min = 0.40  # RÉDUIT de 0.50
-        self.multiplicator_max = 1.00  # RÉDUIT de 1.30
-        self.behavior_level = 0.55     # Seuil : joue serré
-        self.aggressiveness = 12.0     # Pente de la sigmoïde
+        # Paramètres de la fonction sigmoïde
+        self.multiplicator_min = 0.40
+        self.multiplicator_max = 1.00
+        self.behavior_level = 0.55
+        self.aggressiveness = 12.0
 
     def multiplicator(self, win_chance): 
         """Calcule le multiplicateur de mise basé sur win_chance via sigmoïde."""
@@ -27,18 +18,6 @@ class Tag():
         return float(round(result, 2))
 
     def action(self, amount_to_call, position=None, optimal_choice=None, optimal_bet_amount=None, win_chance=None):
-        """Décide de l'action à prendre.
-        
-        Args:
-            amount_to_call: montant à payer
-            position: position du joueur ("button", "utg", etc.)
-            optimal_choice: recommandation optimale
-            optimal_bet_amount: montant de mise optimal
-            win_chance: probabilité de gagner (0..1)
-            
-        Returns:
-            dict: action à exécuter
-        """
         
         # Validations
         try:

@@ -1,8 +1,6 @@
 try:
     import numpy as np
 except Exception:
-    # Si numpy n'est pas installé dans l'environnement de test,
-    # fallback léger sur random pour que la logique reste testable.
     import random as _random
 
     class _Random:
@@ -17,17 +15,6 @@ except Exception:
 
 
 class Calling_station():
-    """Un joueur qui aime caller.
-
-    Comportement amélioré :
-    - respecte un seuil minimal d'équité pour appeler
-    - ne paie pas plus qu'un pourcentage du stack, sauf pour all-in où il exige une équité élevée
-    - check si `amount_to_call == 0`
-    - accepte de caller de petits montants automatiquement
-    - inclut une petite probabilité aléatoire d'appel même si l'équité est légèrement insuffisante,
-      pour simuler un joueur passif qui suit souvent.
-    Les clés d'action sont en minuscules pour rester cohérent avec les autres classes de joueurs.
-    """
 
     def __init__(self, stack,
                  min_equity_to_call: float = 0.25,  # AUGMENTÉ de 0.20
